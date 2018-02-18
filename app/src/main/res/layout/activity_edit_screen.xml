@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.achurm.pplhelper.editScreen">
+
+    <TabHost
+        android:id="@+id/tabHost"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="397dp"
+        app:layout_constraintBottom_toTopOf="@+id/SAVE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:background="@color/colorPrimaryDark">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/colorSecondary" />
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/pushTab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pullTab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/legsTab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.505">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx1op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx1op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx1op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx1op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingTop="10dp"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx2op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx2op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx2op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx2op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingTop="10dp"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx3op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx3op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx3op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx3op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingTop="10dp"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx4op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx4op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx4op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx4op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingTop="10dp"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx5op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx5op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx5op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx5op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingTop="10dp"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <RadioGroup
+                    android:id="@+id/radioEx6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_columnSpan="1"
+                    android:layout_row="0"
+                    android:layout_rowSpan="2">
+
+                    <RadioButton
+                        android:id="@+id/radioEx6op1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radioEx6op2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/editEx6op1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+                <TextView
+                    android:id="@+id/editEx6op2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:paddingTop="10dp"
+                    android:text="@string/dummy_exercise_set_x_rep" />
+
+            </GridLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/SAVE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:onClick="onSaveButtonClick"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabHost"
+        app:layout_constraintVertical_bias="1.0" />
+
+</android.support.constraint.ConstraintLayout>

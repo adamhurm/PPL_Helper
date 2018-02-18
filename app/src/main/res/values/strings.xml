@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">PPL Helper</string>
+    <string name="now">NOW</string>
+    <string name="exercise">Exercise</string>
+    <string name="weight">Weight</string>
+    <string name="set">Set</string>
+    <string name="repititions">Repititions</string>
+    <string name="dummyWeightData">X</string>
+    <string name="dummySetData">Y / Y</string>
+    <string name="dummyRepData">Z</string>
+    <string name="setButtonText">Done With Set</string>
+    <string name="history">HISTORY</string>
+    <string name="dummyExercise1">exercise1</string>
+    <string name="dummyWeight1">Weight1</string>
+    <string name="dummy_set1_x_rep1">set1xrep1</string>
+    <string name="dummyExercise2">exercise2</string>
+    <string name="dummyWeight2">weight2</string>
+    <string name="dummy_set2_x_rep2">set2xrep2</string>
+    <string name="dummyExercise3">exercise3</string>
+    <string name="dummyWeight3">weight3</string>
+    <string name="dummy_set3_x_rep3">set3xrep3</string>
+    <string name="up_next">UP NEXT</string>
+    <string name="dummy_next_exercise">Next Exercise</string>
+    <string name="dummy_exercise_set_x_rep">\"Set\"x\"Rep\" \"Exercise\"</string>
+    <string name="edit">EDIT</string>
+    <string name="save">SAVE</string>
 </resources>
