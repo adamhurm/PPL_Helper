@@ -80,6 +80,7 @@ public class startScreen extends AppCompatActivity {
         updateSetRepData();
     }
 
+    /* Switching with flags */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -134,6 +135,8 @@ public class startScreen extends AppCompatActivity {
                     recentExercise[i].getSets(), recentExercise[i].getReps()) );
         }
     }
+
+    /* Switch to editScreen */
     public void doneSetButtonPressed(View v) {
         setCurrent++;
         if(setCurrent > currentExercise.getSets()) {

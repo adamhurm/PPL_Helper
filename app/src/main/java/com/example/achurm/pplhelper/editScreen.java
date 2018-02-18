@@ -22,11 +22,12 @@ public class editScreen extends AppCompatActivity {
         new Exercise("Barbell Row", 60, 3, 12)
         }, {new Exercise("Incline Bench Press", 70, 3, 5),
         new Exercise("Incline Bench Press", 55, 3, 12)
-        }, {new Exercise("DB Side Lateral Raises", 10, 3, 12),
-        new Exercise("Temp", 1, 1, 1)
-        }, {new Exercise("Triceps Pushdowns", 50, 3, 12),
-        new Exercise("Temp", 1, 1, 1)
-        }
+        }, {new Exercise("DB Side Lateral Raise", 10, 3, 12),
+        new Exercise("Cardio replacement", 1, 1, 1)
+        }, {new Exercise("Triceps Pushdown", 50, 3, 12),
+        new Exercise("Cardio replacement", 1, 1, 1)
+        }, {new Exercise("Overhead Triceps Extension", 50, 3, 12),
+        new Exercise("Cardio replacement", 1, 1, 1)}
     };
 
     @Override
@@ -64,12 +65,14 @@ public class editScreen extends AppCompatActivity {
 
     }
 
+    /* Switching with flags */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
     }
 
+    /* Switch to startScreen */
     public void onSaveButtonClick(View v) {
         Intent mIntent = new Intent(this, startScreen.class);
 

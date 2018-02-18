@@ -24,4 +24,6 @@
     <string name="dummy_exercise_set_x_rep">\"Set\"x\"Rep\" \"Exercise\"</string>
     <string name="edit">EDIT</string>
     <string name="save">SAVE</string>
+    <string name="welcome_message">Welcome to the Push, Pull, Legs workout routine!\n If you\'re already familiar, this app should enable you to improve your progress and tracking. If you aren\'t, we\'ll set up a workout for you that you can alter to fit your needs.</string>
+    <string name="get_started">GET STARTED</string>
 </resources>
