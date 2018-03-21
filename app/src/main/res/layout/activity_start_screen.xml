@@ -10,9 +10,7 @@
     <TabHost
         android:id="@+id/tabHost"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="397dp"
-        app:layout_constraintBottom_toTopOf="@+id/EDIT"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -374,7 +372,9 @@
         android:text="@string/edit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabHost" />
+        app:layout_constraintTop_toBottomOf="@+id/tabHost"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

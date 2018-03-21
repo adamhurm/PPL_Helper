@@ -5,10 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 public class splashScreen extends AppCompatActivity {
 
-    private TabHost tabHost;
+    //private TabHost tabHost;
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
@@ -17,7 +18,7 @@ public class splashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        tabSetup();
+        //tabSetup();
     }
 
 
@@ -36,9 +37,9 @@ public class splashScreen extends AppCompatActivity {
 
         startActivity(mIntent);
     }
-
+    /*
     public void tabSetup() {
-        /* Tab Setup */
+        //Tab Setup
         tabHost = (TabHost)findViewById(R.id.tabHost);
         tabHost.setup();
 
@@ -59,5 +60,13 @@ public class splashScreen extends AppCompatActivity {
         spec3.setContent(R.id.legsTab);
         spec3.setIndicator("LEGS");
         tabHost.addTab(spec3);
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+    */
 }
