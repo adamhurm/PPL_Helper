@@ -85,7 +85,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingLeft="40dp"
@@ -104,6 +104,13 @@
                     android:layout_height="wrap_content"
                     android:onClick="deleteClick"
                     android:text="@string/delete" />
+
+                <CheckBox
+                    android:id="@+id/toggleFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:button="@android:drawable/btn_star" />
 
             </LinearLayout>
 

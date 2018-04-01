@@ -1,10 +1,13 @@
 package com.example.achurm.pplhelper;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ public class customExerciseScreen extends AppCompatActivity {
     private int mNumber;
 
     private TextView mExerciseNameView, mSetsView, mRepsView, mWeightView;
+    private CheckBox mFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +37,10 @@ public class customExerciseScreen extends AppCompatActivity {
         mSetsView = (TextView) findViewById(R.id.editSet);
         mRepsView = (TextView) findViewById(R.id.editRep);
         mWeightView = (TextView) findViewById(R.id.editWeight);
+        mFavorite = (CheckBox) findViewById(R.id.toggleFavorite);
 
         onNewIntent(getIntent());
 
-        //mExerciseNameView.setText();
     }
 
     public boolean addClick(View v) {
@@ -55,14 +59,15 @@ public class customExerciseScreen extends AppCompatActivity {
             int sets = Integer.parseInt(mSetsView.getText().toString());
             int reps = Integer.parseInt(mRepsView.getText().toString());
             int weight = Integer.parseInt(mWeightView.getText().toString());
+            boolean isFavorite = mFavorite.isChecked();
 
             ExerciseDBHandler handler = new ExerciseDBHandler(this);
 
-            Exercise exercise = handler.findExercise(name, sets, reps, weight);
+            Exercise exercise = handler.findExercise(name, weight, sets, reps);
 
             if (exercise == null) {
-                Exercise addedExercise = new Exercise(name, weight, sets, reps);
-                handler.addExercise(addedExercise);
+                mExercise = new Exercise(name, weight, sets, reps);
+                handler.addExercise(mExercise, isFavorite);
                 Toast.makeText(this,
                     String.format("%s exercise was added to the database.", name),
                     Toast.LENGTH_SHORT).show();
@@ -162,6 +167,29 @@ public class customExerciseScreen extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "No match found", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    public void favoriteClick() {
+        /* Check for empty fields */
+        if(mExerciseNameView.getText().toString().isEmpty()
+                || mSetsView.getText().toString().isEmpty()
+                || mRepsView.getText().toString().isEmpty()
+                || mWeightView.getText().toString().isEmpty()) {
+            Toast.makeText(this,
+                    "Unable to add exercise.\nPlease check that all fields are filled in.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            /* collect variables */
+            String name = mExerciseNameView.getText().toString();
+            int sets = Integer.parseInt(mSetsView.getText().toString());
+            int reps = Integer.parseInt(mRepsView.getText().toString());
+            int weight = Integer.parseInt(mWeightView.getText().toString());
+
+            ExerciseDBHandler handler = new ExerciseDBHandler(this);
+
+            Exercise exercise = handler.findExercise(name, weight, sets, reps);
         }
     }
 

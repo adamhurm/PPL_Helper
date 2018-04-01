@@ -1,12 +1,15 @@
 package com.example.achurm.pplhelper;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,18 +19,24 @@ import org.w3c.dom.Text;
 import java.util.Locale;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.util.Locale.US;
 
-public class startScreen extends AppCompatActivity implements TabHost.OnTabChangeListener {
+public class startScreen extends AppCompatActivity {
 
-    private TabHost tabHost;
-    private TextView setData;
-    private TextView repData;
-    private TextView weightData;
+    private TextView weightData, setData, repData;
     private TextView[][] recentExerciseTV;
     private Exercise[] recentExercise;
     private Exercise currentExercise;
+
+    /* Timer */
+    private Chronometer mChronometer;
+    private Button startWatchButton, stopWatchButton, resetWatchButton;
+
+    /* Button bar */
+    private Button mPullButton, mPushButton, mLegsButton;
 
     private TextView exercise;
     private TextView nextExercise;
@@ -82,36 +91,23 @@ public class startScreen extends AppCompatActivity implements TabHost.OnTabChang
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        //Tab Setup
-        tabHost = (TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-
-        //Push
-        TabHost.TabSpec spec1 = tabHost.newTabSpec("PUSH");
-        spec1.setContent(R.id.pushTab);
-        spec1.setIndicator("PUSH");
-        tabHost.addTab(spec1);
-
-        //Pull
-        TabHost.TabSpec spec2 = tabHost.newTabSpec("PULL");
-        spec2.setContent(R.id.pullTab);
-        spec2.setIndicator("PULL");
-        tabHost.addTab(spec2);
-
-        //Legs
-        TabHost.TabSpec spec3 = tabHost.newTabSpec("LEGS");
-        spec3.setContent(R.id.legsTab);
-        spec3.setIndicator("LEGS");
-        tabHost.addTab(spec3);
-
-        tabHost.setOnTabChangedListener(this);
-        //tabSetup();
-
 
         /* Weight, Set, Rep data */
         weightData = (TextView)findViewById(R.id.weightData);
         setData = (TextView)findViewById(R.id.setData);
         repData = (TextView)findViewById(R.id.repData);
+
+        /* Timer pointers */
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+        startWatchButton = (Button)findViewById(R.id.startWatchButton);
+        stopWatchButton = (Button)findViewById(R.id.stopWatchButton);
+        resetWatchButton = (Button)findViewById(R.id.resetWatchButton);
+
+        /* Button bar pointers */
+        mPushButton = (Button) findViewById(R.id.pushButton);
+        mPullButton = (Button) findViewById(R.id.pullButton);
+        mLegsButton = (Button) findViewById(R.id.legsButton);
 
         /* Exercise data */
         //fill current exercise
@@ -168,34 +164,6 @@ public class startScreen extends AppCompatActivity implements TabHost.OnTabChang
         startActivity(mIntent);
     }
 
-    /*
-    public void tabSetup() {
-        //Tab Setup
-        tabHost = (TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-
-        //Push
-        TabHost.TabSpec spec1 = tabHost.newTabSpec("PUSH");
-        spec1.setContent(R.id.pushTab);
-        spec1.setIndicator("PUSH");
-        tabHost.addTab(spec1);
-
-        //Pull
-        TabHost.TabSpec spec2 = tabHost.newTabSpec("PULL");
-        spec2.setContent(R.id.pullTab);
-        spec2.setIndicator("PULL");
-        tabHost.addTab(spec2);
-
-        //Legs
-        TabHost.TabSpec spec3 = tabHost.newTabSpec("LEGS");
-        spec3.setContent(R.id.legsTab);
-        spec3.setIndicator("LEGS");
-        tabHost.addTab(spec3);
-
-        tabHost.setOnTabChangedListener(this);
-    }
-    */
-
     public void updateSetRepData() {
         /* Get next exercise */
         Exercise nextExerciseTemp = null;
@@ -249,12 +217,48 @@ public class startScreen extends AppCompatActivity implements TabHost.OnTabChang
         }
         updateSetRepData();
     }
-    @Override
-    public void onTabChanged(String tabId) {
-        Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
-        whichPPL = tabId;
-        setCurrent = 1;
-        currentExerciseNumber = 0;
+
+    /* Stopwatch (Chronometer) functions */
+    public void onStartWatchClicked(View v) {
+        mChronometer.start();
+    }
+    public void onStopWatchClicked(View v) {
+        mChronometer.stop();
+    }
+    public void onResetWatchClicked(View v) {
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+    }
+
+    /* Button bar functions */
+    public void pplButtonClick(View v) {
+
+        switch(v.getId()) {
+            case R.id.pushButton:
+                whichPPL = "PUSH";
+                mPushButton.setTextColor(Color.BLACK);
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+            case R.id.pullButton:
+                whichPPL = "PULL";
+                mPushButton.setTextColor(Color.parseColor("#165597"));
+                mPullButton.setTextColor(Color.BLACK);
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+            case R.id.legsButton:
+                whichPPL = "LEGS";
+                mPushButton.setTextColor(Color.parseColor("#165597"));
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.BLACK);
+                break;
+            default:
+                mPushButton.setTextColor(Color.BLACK);
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+        }
         updateSetRepData();
     }
+
+
 }

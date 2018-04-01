@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 public class splashScreen extends AppCompatActivity {
 
-    //private TabHost tabHost;
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
@@ -18,7 +17,7 @@ public class splashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        //tabSetup();
+
     }
 
 
@@ -29,44 +28,24 @@ public class splashScreen extends AppCompatActivity {
         setIntent(intent);
     }
 
-    public void onGetStartedButtonClick(View v) {
+    public void pplButtonClick(View v) {
         Intent mIntent = new Intent(this, startScreen.class);
-
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
 
+        switch(v.getId()) {
+            case R.id.pushButton:
+                mIntent.putExtra("ppl", "PUSH");
+                break;
+            case R.id.pullButton:
+                mIntent.putExtra("ppl", "PUSH");
+                break;
+            case R.id.legsButton:
+                mIntent.putExtra("ppl", "LEGS");
+                break;
+            default:
+                mIntent.putExtra("ppl", "PUSH");
+        }
         startActivity(mIntent);
     }
-    /*
-    public void tabSetup() {
-        //Tab Setup
-        tabHost = (TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-
-        //Push
-        TabHost.TabSpec spec1 = tabHost.newTabSpec("PUSH");
-        spec1.setContent(R.id.pushTab);
-        spec1.setIndicator("PUSH");
-        tabHost.addTab(spec1);
-
-        //Pull
-        TabHost.TabSpec spec2 = tabHost.newTabSpec("PULL");
-        spec2.setContent(R.id.pullTab);
-        spec2.setIndicator("PULL");
-        tabHost.addTab(spec2);
-
-        //Legs
-        TabHost.TabSpec spec3 = tabHost.newTabSpec("LEGS");
-        spec3.setContent(R.id.legsTab);
-        spec3.setIndicator("LEGS");
-        tabHost.addTab(spec3);
-
-        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
-                Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    */
 }

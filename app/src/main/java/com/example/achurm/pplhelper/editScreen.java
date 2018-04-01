@@ -1,29 +1,32 @@
 package com.example.achurm.pplhelper;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class editScreen extends AppCompatActivity implements TabHost.OnTabChangeListener {
+public class editScreen extends AppCompatActivity {
 
     private ArrayList<TextView> exerciseTVs;
 
     private Exercise mExercise;
     private int mNumber;
 
-    private TabHost tabHost;
+    private Button mPushButton, mPullButton, mLegsButton;
     private String whichPPL = "PULL";
 
     /* Intent flags */
     private static final boolean USE_FLAG = true;
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
-    private static final int mEditFlag = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP;
+    private static final int mEditFlag = Intent.FLAG_ACTIVITY_NO_HISTORY;
 
 
     /* This will fill the app with initial exercises */
@@ -59,9 +62,6 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_screen);
 
-        tabSetup();
-        tabHost.setOnTabChangedListener(this);
-        onNewIntent(getIntent());
         /*pullExerciseTV = new TextView[6][2]; //hardcoded for now
 
         /*
@@ -78,6 +78,7 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
         pullExerciseTV[5][0] = (TextView)findViewById(R.id.editEx6op1);
         pullExerciseTV[5][1] = (TextView)findViewById(R.id.editEx6op2);
         */
+
         exerciseTVs = new ArrayList<TextView>();
         exerciseTVs.add((TextView)findViewById(R.id.nameEx1));
         exerciseTVs.add((TextView)findViewById(R.id.nameEx2));
@@ -86,6 +87,12 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
         exerciseTVs.add((TextView)findViewById(R.id.nameEx5));
         exerciseTVs.add((TextView)findViewById(R.id.nameEx6));
 
+
+        /* Button bar pointers */
+        mPushButton = (Button) findViewById(R.id.pushButton);
+        mPullButton = (Button) findViewById(R.id.pullButton);
+        mLegsButton = (Button) findViewById(R.id.legsButton);
+        
         fillTextViews();
 
     }
@@ -96,16 +103,26 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
         super.onNewIntent(intent);
 
         Bundle b = this.getIntent().getExtras();
+
         if(b != null) {
-            /* will have to check for null results if startScreen passes extras with intent */
-            mExercise = b.getParcelable("exercise");
-            mNumber = b.getInt("number");
+
+            if(b.getString("ppl") != null) {
+                String temp = b.getString("ppl");
+                if(temp == "NEW") whichPPL = "PUSH";
+                else whichPPL = temp;
+            }
+            else {
+
+                /* will have to check for null results if startScreen passes extras with intent */
+                mExercise = b.getParcelable("exercise");
+                mNumber = b.getInt("number");
 
 
-            /* Refresh updated textViews */
-            exerciseTVs.get(mNumber-1).setText(String.format("%s\n%dx%d\t\t\t\t%d",
-                    mExercise.getExercise(), mExercise.getSets(), mExercise.getReps(),
-                    mExercise.getWeight()));
+                /* Refresh updated textViews */
+                exerciseTVs.get(mNumber - 1).setText(String.format("%s\n%dx%d\t\t\t\t%d",
+                        mExercise.getExercise(), mExercise.getSets(), mExercise.getReps(),
+                        mExercise.getWeight()));
+            }
         }
 
         setIntent(intent);
@@ -169,37 +186,6 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
         startActivity(mIntent);
     }
 
-    public void tabSetup() {
-        /* Tab Setup */
-        tabHost = (TabHost)findViewById(R.id.tabHost);
-        tabHost.setup();
-
-        //Push
-        TabHost.TabSpec spec1 = tabHost.newTabSpec("PUSH");
-        spec1.setContent(R.id.pushTab);
-        spec1.setIndicator("PUSH");
-        tabHost.addTab(spec1);
-
-        //Pull
-        TabHost.TabSpec spec2 = tabHost.newTabSpec("PULL");
-        spec2.setContent(R.id.pullTab);
-        spec2.setIndicator("PULL");
-        tabHost.addTab(spec2);
-
-        //Legs
-        TabHost.TabSpec spec3 = tabHost.newTabSpec("LEGS");
-        spec3.setContent(R.id.legsTab);
-        spec3.setIndicator("LEGS");
-        tabHost.addTab(spec3);
-    }
-
-    @Override
-    public void onTabChanged(String tabId) {
-        Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
-        whichPPL = tabId;
-        fillTextViews();
-    }
-
     public void fillTextViews() {
         /* Fill TextViews */
         for(int i=0; i<6; i++){
@@ -213,5 +199,77 @@ public class editScreen extends AppCompatActivity implements TabHost.OnTabChange
                 exerciseTVs.get(i).setText(String.format("%s\n%dx%d\t\t\t\t%d",
                     temp.getExercise(), temp.getSets(), temp.getReps(), temp.getWeight()));
         }
+    }
+
+    /* Code for 6 favorite buttons, this is being moved to customExerciseScreen for now
+    public void onFavoriteButtonClick(View v) {
+        int favIndex = 0;
+        switch(v.getId()) {
+            case R.id.favEx1:
+                favIndex = 0;
+                break;
+            case R.id.favEx2:
+                favIndex = 1;
+                break;
+            case R.id.favEx3:
+                favIndex = 2;
+                break;
+            case R.id.favEx4:
+                favIndex = 3;
+                break;
+            case R.id.favEx5:
+                favIndex = 4;
+                break;
+            case R.id.favEx6:
+                favIndex = 5;
+                break;
+        }
+
+        ExerciseDBHandler dbhandler = new ExerciseDBHandler(this);
+
+        String temp = exerciseTVs.get(favIndex).getText().toString();
+        String[] tokens = temp.split("\\s+");
+        String name = tokens[0];
+        int weight = Integer.parseInt(exerciseTVs.get(favIndex).getText().toString();
+        int sets = Integer.parseInt(mSetsView.getText().toString());
+        int reps = Integer.parseInt(mRepsView.getText().toString());
+
+        dbhandler.findExercise(name, weight, sets, reps);
+
+
+        String query = "UPDATE Exercises SET Favorite = 1";
+         + (FavoriteButton.isEnabled() ? 1 : 0)
+    }
+    */
+
+    /* Button bar functions */
+    public void pplButtonClick(View v) {
+
+        switch(v.getId()) {
+            case R.id.pushButton:
+                whichPPL = "PUSH";
+                mPushButton.setTextColor(Color.BLACK);
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+            case R.id.pullButton:
+                whichPPL = "PULL";
+                mPushButton.setTextColor(Color.parseColor("#165597"));
+                mPullButton.setTextColor(Color.BLACK);
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+            case R.id.legsButton:
+                whichPPL = "LEGS";
+                mPushButton.setTextColor(Color.parseColor("#165597"));
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.BLACK);
+                break;
+            default:
+                mPushButton.setTextColor(Color.BLACK);
+                mPullButton.setTextColor(Color.parseColor("#165597"));
+                mLegsButton.setTextColor(Color.parseColor("#165597"));
+                break;
+        }
+        fillTextViews();
     }
 }

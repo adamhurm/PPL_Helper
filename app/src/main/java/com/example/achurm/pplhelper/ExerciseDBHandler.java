@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import com.example.achurm.pplhelper.Exercise;
 
@@ -23,6 +25,8 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_REPS = "Reps";
     private static final String COLUMN_SETS = "Sets";
     private static final String COLUMN_WEIGHT = "Weight";
+    private static final String COLUMN_TIME = "Timestamp";
+    private static final String COLUMN_FAVORITE = "Favorite";
 
     public ExerciseDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -32,9 +36,10 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_EXERCISE_TABLE =
                 String.format(("CREATE TABLE %s (%s INT PRIMARY KEY,"
-                        + " %s TEXT NOT NULL, %s INT NOT NULL, %s INT NOT NULL, %s INT NOT NULL);"),
+                        + " %s TEXT NOT NULL, %s INT NOT NULL, %s INT NOT NULL, %s INT NOT NULL,"
+                        + " %s TEXT NOT NULL, %s BIT NOT NULL);"),
                         TABLE_EXERCISE, COLUMN_ID, COLUMN_NAME, COLUMN_WEIGHT, COLUMN_SETS,
-                        COLUMN_REPS, COLUMN_ID);
+                        COLUMN_REPS, COLUMN_TIME, COLUMN_FAVORITE);
 
         db.execSQL(CREATE_EXERCISE_TABLE);
     }
@@ -45,7 +50,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addExercise(Exercise exercise) {
+    public void addExercise(Exercise exercise, boolean isFavorite) {
         ContentValues values = new ContentValues();
 
         String query = "SELECT * FROM " + TABLE_EXERCISE;
@@ -53,11 +58,17 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         int count = cursor.getCount();
 
+        //get time
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(new Date());
+
         values.put(COLUMN_ID, count);
         values.put(COLUMN_NAME, exercise.getExercise());
         values.put(COLUMN_WEIGHT, exercise.getWeight());
         values.put(COLUMN_SETS, exercise.getSets());
         values.put(COLUMN_REPS, exercise.getReps());
+        values.put(COLUMN_TIME, date);
+        values.put(COLUMN_FAVORITE, isFavorite);
 
         db.insert(TABLE_EXERCISE, null, values);
 
@@ -148,6 +159,20 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         db.close();
 
         return result;
+
+    }
+
+    public void updateExercise(String exerciseName, int sets, int reps, int weight) {
+        String sqlQuery =
+                String.format("UPDATE %s SET %s=%d WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                        TABLE_EXERCISE, COLUMN_FAVORITE, 1, COLUMN_NAME, exerciseName,
+                        COLUMN_WEIGHT, weight, COLUMN_SETS, sets, COLUMN_REPS, reps);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL(sqlQuery);
+
+        db.close();
 
     }
 }
