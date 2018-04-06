@@ -5,26 +5,15 @@ import android.graphics.Color;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.util.Locale;
-import java.util.Set;
-import java.util.Stack;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static java.util.Locale.US;
 
-public class startScreen extends AppCompatActivity {
+public class StartScreen extends AppCompatActivity {
 
     private TextView weightData, setData, repData;
     private TextView[][] recentExerciseTV;
@@ -156,7 +145,7 @@ public class startScreen extends AppCompatActivity {
     }
 
     public void onEditButtonClick(View v) {
-        Intent mIntent = new Intent(this, editScreen.class);
+        Intent mIntent = new Intent(this, ExerciseListScreen.class);
 
         if(USE_FLAG)
             mIntent.addFlags(mFlag);

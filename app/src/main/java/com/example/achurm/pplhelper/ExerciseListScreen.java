@@ -1,19 +1,16 @@
 package com.example.achurm.pplhelper;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class editScreen extends AppCompatActivity {
+public class ExerciseListScreen extends AppCompatActivity {
 
     private ArrayList<TextView> exerciseTVs;
 
@@ -146,7 +143,7 @@ public class editScreen extends AppCompatActivity {
 
     /* Switch to customExerciseScreen */
     public void onEditButtonClick(View v) {
-        Intent mIntent = new Intent(this, customExerciseScreen.class);
+        Intent mIntent = new Intent(this, ExerciseCustomizeScreen.class);
 
         Bundle b = new Bundle();
 

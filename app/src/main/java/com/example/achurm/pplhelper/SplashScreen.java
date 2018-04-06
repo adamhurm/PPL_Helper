@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.Toast;
 
-public class splashScreen extends AppCompatActivity {
+public class SplashScreen extends AppCompatActivity {
 
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
@@ -29,7 +29,7 @@ public class splashScreen extends AppCompatActivity {
     }
 
     public void pplButtonClick(View v) {
-        Intent mIntent = new Intent(this, startScreen.class);
+        Intent mIntent = new Intent(this, StartScreen.class);
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
 

@@ -1,12 +1,9 @@
 package com.example.achurm.pplhelper;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +12,7 @@ import android.widget.Toast;
  * Created by achurm on 3/8/18.
  */
 
-public class customExerciseScreen extends AppCompatActivity {
+public class ExerciseCustomizeScreen extends AppCompatActivity {
 
     /* Intent flags */
     private static final boolean USE_FLAG = true;
@@ -196,6 +193,7 @@ public class customExerciseScreen extends AppCompatActivity {
     /* Switching with flags */
     @Override
     protected void onNewIntent(Intent intent) {
+        /* Change this to onResume - separate filling code to function, call from onCreate and onNewIntent */
         super.onNewIntent(intent);
 
         Bundle b = this.getIntent().getExtras();
@@ -221,7 +219,7 @@ public class customExerciseScreen extends AppCompatActivity {
         /* Exit back to editScreen is add is successful */
         if(addClick(v)) {
 
-            Intent mIntent = new Intent(this, editScreen.class);
+            Intent mIntent = new Intent(this, ExerciseListScreen.class);
             Bundle b = new Bundle();
             b.putParcelable("exercise", mExercise);
             b.putInt("number", mNumber);
