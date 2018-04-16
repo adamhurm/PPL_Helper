@@ -14,29 +14,32 @@ import android.widget.Toast;
 import static java.util.Locale.US;
 
 public class StartScreen extends AppCompatActivity {
-
-    private TextView weightData, setData, repData;
-    private TextView[][] recentExerciseTV;
+    /* Exercise Data */
     private Exercise[] recentExercise;
     private Exercise currentExercise;
+    private String whichPPL = "PUSH";
+    private int currentExerciseNumber = 0;
+    private int setCurrent = 1;
+
+    /* Exercise TVs */
+    private TextView exercise;
+    private TextView weightData, setData, repData;
+    private TextView nextExercise;
+    private TextView[][] recentExerciseTV;
 
     /* Timer */
     private Chronometer mChronometer;
+    /* No need for pointers to buttons at the moment
     private Button startWatchButton, stopWatchButton, resetWatchButton;
+    */
 
     /* Button bar */
     private Button mPullButton, mPushButton, mLegsButton;
 
-    private TextView exercise;
-    private TextView nextExercise;
-
-    private String whichPPL = "PULL";
-
-    private int currentExerciseNumber = 0;
-    private int setCurrent = 1;
-
+    /* Intent flags */
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
+
 
 
     /* This will be replaced with non-dummy data once a user accumulates a history of workouts */
@@ -88,10 +91,11 @@ public class StartScreen extends AppCompatActivity {
 
         /* Timer pointers */
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        mChronometer.setBase(SystemClock.elapsedRealtime());
+        /* No need for pointers to buttons at the moment
         startWatchButton = (Button)findViewById(R.id.startWatchButton);
         stopWatchButton = (Button)findViewById(R.id.stopWatchButton);
         resetWatchButton = (Button)findViewById(R.id.resetWatchButton);
+        */
 
         /* Button bar pointers */
         mPushButton = (Button) findViewById(R.id.pushButton);
@@ -134,6 +138,7 @@ public class StartScreen extends AppCompatActivity {
         recentExerciseTV[1][2] = (TextView)findViewById(R.id.entry_setrep2);
         recentExerciseTV[2][2] = (TextView)findViewById(R.id.entry_setrep3);
 
+        updateButtonBar();
         updateSetRepData();
     }
 
@@ -207,8 +212,10 @@ public class StartScreen extends AppCompatActivity {
         updateSetRepData();
     }
 
+
     /* Stopwatch (Chronometer) functions */
     public void onStartWatchClicked(View v) {
+        mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.start();
     }
     public void onStopWatchClicked(View v) {
@@ -218,24 +225,37 @@ public class StartScreen extends AppCompatActivity {
         mChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
+
     /* Button bar functions */
     public void pplButtonClick(View v) {
-
+        Toast.makeText(getApplicationContext(), "button bar function called", Toast.LENGTH_SHORT).show();
         switch(v.getId()) {
             case R.id.pushButton:
                 whichPPL = "PUSH";
+                break;
+            case R.id.pullButton:
+                whichPPL = "PULL";
+                break;
+            case R.id.legsButton:
+                whichPPL = "LEGS";
+                break;
+        }
+        updateButtonBar();
+        updateSetRepData();
+    }
+    public void updateButtonBar() {
+        switch(whichPPL) {
+            case "PUSH":
                 mPushButton.setTextColor(Color.BLACK);
                 mPullButton.setTextColor(Color.parseColor("#165597"));
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
-            case R.id.pullButton:
-                whichPPL = "PULL";
+            case "PULL":
                 mPushButton.setTextColor(Color.parseColor("#165597"));
                 mPullButton.setTextColor(Color.BLACK);
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
-            case R.id.legsButton:
-                whichPPL = "LEGS";
+            case "LEGS":
                 mPushButton.setTextColor(Color.parseColor("#165597"));
                 mPullButton.setTextColor(Color.parseColor("#165597"));
                 mLegsButton.setTextColor(Color.BLACK);
@@ -246,7 +266,6 @@ public class StartScreen extends AppCompatActivity {
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
         }
-        updateSetRepData();
     }
 
 

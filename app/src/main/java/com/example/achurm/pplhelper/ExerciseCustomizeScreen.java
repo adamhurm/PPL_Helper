@@ -19,7 +19,8 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
     private Exercise mExercise;
-    private int mNumber;
+    private int mNumber; //textView number
+    private String mExerciseType;
 
     private TextView mExerciseNameView, mSetsView, mRepsView, mWeightView;
     private CheckBox mFavorite;
@@ -27,7 +28,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_exercise_screen);
+        setContentView(R.layout.activity_exercise_customize_screen);
 
         /* TextViews for Exercise entry */
         mExerciseNameView = (TextView) findViewById(R.id.editExercise);
@@ -36,7 +37,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
         mWeightView = (TextView) findViewById(R.id.editWeight);
         mFavorite = (CheckBox) findViewById(R.id.toggleFavorite);
 
-        onNewIntent(getIntent());
+        unBundle(getIntent());
 
     }
 
@@ -64,7 +65,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
 
             if (exercise == null) {
                 mExercise = new Exercise(name, weight, sets, reps);
-                handler.addExercise(mExercise, isFavorite);
+                handler.addExercise(mExercise, isFavorite, mExerciseType);
                 Toast.makeText(this,
                     String.format("%s exercise was added to the database.", name),
                     Toast.LENGTH_SHORT).show();
@@ -167,7 +168,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
         }
     }
 
-    public void favoriteClick() {
+    public void favoriteClick(View v) {
         /* Check for empty fields */
         if(mExerciseNameView.getText().toString().isEmpty()
                 || mSetsView.getText().toString().isEmpty()
@@ -192,14 +193,22 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
 
     /* Switching with flags */
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onResume() {
         /* Change this to onResume - separate filling code to function, call from onCreate and onNewIntent */
-        super.onNewIntent(intent);
+        super.onResume();
 
-        Bundle b = this.getIntent().getExtras();
+        unBundle(this.getIntent());
+
+        // setIntent(intent);
+    }
+
+    public void unBundle(Intent intent) {
+        Bundle b = intent.getExtras();
+        /* Check if bundle has content, if it does, assign exercise information to TVs */
         if(b != null) {
             mExercise = b.getParcelable("exercise");
             mNumber = b.getInt("number");
+            mExerciseType = b.getString("type");
 
             if(mExercise == null)
                 Toast.makeText(this, "Exercise is null", Toast.LENGTH_SHORT).show();
@@ -210,7 +219,6 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
                 mWeightView.setText(Integer.toString(mExercise.getWeight()));
             }
         }
-        setIntent(intent);
     }
 
     /* Switch back to Exercise Edit Screen */

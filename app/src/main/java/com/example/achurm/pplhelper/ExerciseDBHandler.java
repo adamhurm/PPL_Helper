@@ -27,6 +27,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_WEIGHT = "Weight";
     private static final String COLUMN_TIME = "Timestamp";
     private static final String COLUMN_FAVORITE = "Favorite";
+    private static final String COLUMN_TYPE = "Type";
 
     public ExerciseDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -37,9 +38,9 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         String CREATE_EXERCISE_TABLE =
                 String.format(("CREATE TABLE %s (%s INT PRIMARY KEY,"
                         + " %s TEXT NOT NULL, %s INT NOT NULL, %s INT NOT NULL, %s INT NOT NULL,"
-                        + " %s TEXT NOT NULL, %s BIT NOT NULL);"),
+                        + " %s TEXT NOT NULL, %s BIT NOT NULL, %s TEXT NOT NULL);"),
                         TABLE_EXERCISE, COLUMN_ID, COLUMN_NAME, COLUMN_WEIGHT, COLUMN_SETS,
-                        COLUMN_REPS, COLUMN_TIME, COLUMN_FAVORITE);
+                        COLUMN_REPS, COLUMN_TIME, COLUMN_FAVORITE, COLUMN_TYPE);
 
         db.execSQL(CREATE_EXERCISE_TABLE);
     }
@@ -50,7 +51,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addExercise(Exercise exercise, boolean isFavorite) {
+    public void addExercise(Exercise exercise, boolean isFavorite, String exerciseType) {
         ContentValues values = new ContentValues();
 
         String query = "SELECT * FROM " + TABLE_EXERCISE;
@@ -69,6 +70,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_REPS, exercise.getReps());
         values.put(COLUMN_TIME, date);
         values.put(COLUMN_FAVORITE, isFavorite);
+        values.put(COLUMN_TYPE, exerciseType);
 
         db.insert(TABLE_EXERCISE, null, values);
 

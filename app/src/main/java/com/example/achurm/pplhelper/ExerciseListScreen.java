@@ -57,7 +57,7 @@ public class ExerciseListScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_screen);
+        setContentView(R.layout.activity_exercise_list_screen);
 
         /*pullExerciseTV = new TextView[6][2]; //hardcoded for now
 
@@ -127,7 +127,7 @@ public class ExerciseListScreen extends AppCompatActivity {
 
     /* Switch to startScreen */
     public void onSaveButtonClick(View v) {
-        Intent mIntent = new Intent(this, startScreen.class);
+        Intent mIntent = new Intent(this, StartScreen.class);
 
         /*
         Bundle b = new Bundle();
@@ -171,11 +171,14 @@ public class ExerciseListScreen extends AppCompatActivity {
         if(whichPPL == "PULL") mExercise = pullExercises[mNumber-1]; //hardcoded exercises
         else if(whichPPL == "PUSH") mExercise = pushExercises[mNumber-1]; //hardcoded exercises
         else if(whichPPL == "LEGS") mExercise = legsExercises[mNumber-1]; //hardcoded exercises
+
+        //add exercise and TextView number to bundle
         b.putParcelable("exercise", mExercise);
         b.putInt("number", mNumber);
+        //determine exerciseType and add to bundle
+        b.putString("type", whichPPL);
 
         mIntent.putExtras(b);
-
 
         if(USE_FLAG)
             mIntent.addFlags(mEditFlag);
@@ -240,23 +243,35 @@ public class ExerciseListScreen extends AppCompatActivity {
     */
 
     /* Button bar functions */
+    /* Button bar functions */
     public void pplButtonClick(View v) {
-
         switch(v.getId()) {
             case R.id.pushButton:
                 whichPPL = "PUSH";
+                break;
+            case R.id.pullButton:
+                whichPPL = "PULL";
+                break;
+            case R.id.legsButton:
+                whichPPL = "LEGS";
+                break;
+        }
+        updateButtonBar();
+        fillTextViews();
+    }
+    public void updateButtonBar() {
+        switch(whichPPL) {
+            case "PUSH":
                 mPushButton.setTextColor(Color.BLACK);
                 mPullButton.setTextColor(Color.parseColor("#165597"));
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
-            case R.id.pullButton:
-                whichPPL = "PULL";
+            case "PULL":
                 mPushButton.setTextColor(Color.parseColor("#165597"));
                 mPullButton.setTextColor(Color.BLACK);
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
-            case R.id.legsButton:
-                whichPPL = "LEGS";
+            case "LEGS":
                 mPushButton.setTextColor(Color.parseColor("#165597"));
                 mPullButton.setTextColor(Color.parseColor("#165597"));
                 mLegsButton.setTextColor(Color.BLACK);
@@ -267,6 +282,5 @@ public class ExerciseListScreen extends AppCompatActivity {
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
         }
-        fillTextViews();
     }
 }
