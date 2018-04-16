@@ -18,7 +18,7 @@ public class ExerciseListScreen extends AppCompatActivity {
     private int mNumber;
 
     private Button mPushButton, mPullButton, mLegsButton;
-    private String whichPPL = "PULL";
+    private String whichPPL = "PUSH";
 
     /* Intent flags */
     private static final boolean USE_FLAG = true;
@@ -94,33 +94,35 @@ public class ExerciseListScreen extends AppCompatActivity {
 
     }
 
-    /* Switching with flags */
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
+    protected void onStart() {
+        super.onStart();
         Bundle b = this.getIntent().getExtras();
 
         if(b != null) {
 
             if(b.getString("ppl") != null) {
-                String temp = b.getString("ppl");
-                if(temp == "NEW") whichPPL = "PUSH";
-                else whichPPL = temp;
+                whichPPL = b.getString("ppl");
+                mNumber = 1;
             }
+            /* will have to check for null results if startScreen passes extras with intent */
             else {
-
-                /* will have to check for null results if startScreen passes extras with intent */
                 mExercise = b.getParcelable("exercise");
                 mNumber = b.getInt("number");
-
-
                 /* Refresh updated textViews */
                 exerciseTVs.get(mNumber - 1).setText(String.format("%s\n%dx%d\t\t\t\t%d",
                         mExercise.getExercise(), mExercise.getSets(), mExercise.getReps(),
                         mExercise.getWeight()));
             }
+
+            fillTextViews();
         }
+    }
+
+    /* Switching with flags */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
         setIntent(intent);
     }

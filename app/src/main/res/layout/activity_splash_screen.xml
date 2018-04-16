@@ -18,7 +18,7 @@
             style="?android:attr/buttonBarStyle" >
 
             <Button
-                android:id="@+id/pushButton"
+                android:id="@+id/pushButtonSplash"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                 android:textSize="18sp" />
 
             <Button
-                android:id="@+id/pullButton"
+                android:id="@+id/pullButtonSplash"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:textSize="18sp" />
 
             <Button
-                android:id="@+id/legsButton"
+                android:id="@+id/legsButtonSplash"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

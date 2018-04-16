@@ -17,7 +17,6 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-
     }
 
 
@@ -32,20 +31,23 @@ public class SplashScreen extends AppCompatActivity {
         Intent mIntent = new Intent(this, StartScreen.class);
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
+        Bundle b = new Bundle();
 
         switch(v.getId()) {
-            case R.id.pushButton:
-                mIntent.putExtra("ppl", "PUSH");
+            case R.id.pushButtonSplash:
+                b.putString("ppl", "PUSH");
                 break;
-            case R.id.pullButton:
-                mIntent.putExtra("ppl", "PUSH");
+            case R.id.pullButtonSplash:
+                b.putString("ppl", "PULL");
                 break;
-            case R.id.legsButton:
-                mIntent.putExtra("ppl", "LEGS");
+            case R.id.legsButtonSplash:
+                b.putString("ppl", "LEGS");
                 break;
             default:
-                mIntent.putExtra("ppl", "PUSH");
+                b.putString("ppl", "PUSH");
+                break;
         }
+        mIntent.putExtras(b);
         startActivity(mIntent);
     }
 }

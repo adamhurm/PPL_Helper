@@ -29,6 +29,7 @@ public class StartScreen extends AppCompatActivity {
 
     /* Timer */
     private Chronometer mChronometer;
+    private long trackingTime = 0;
     /* No need for pointers to buttons at the moment
     private Button startWatchButton, stopWatchButton, resetWatchButton;
     */
@@ -83,6 +84,7 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
+        Bundle b = getIntent().getExtras();
 
         /* Weight, Set, Rep data */
         weightData = (TextView)findViewById(R.id.weightData);
@@ -91,6 +93,7 @@ public class StartScreen extends AppCompatActivity {
 
         /* Timer pointers */
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        mChronometer.setBase(SystemClock.elapsedRealtime());
         /* No need for pointers to buttons at the moment
         startWatchButton = (Button)findViewById(R.id.startWatchButton);
         stopWatchButton = (Button)findViewById(R.id.stopWatchButton);
@@ -149,11 +152,27 @@ public class StartScreen extends AppCompatActivity {
         setIntent(intent);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Bundle b = getIntent().getExtras();
+        if(b.getString("ppl") != null) {
+            whichPPL = b.getString("ppl");
+            updateButtonBar();
+            updateSetRepData();
+        }
+    }
+
     public void onEditButtonClick(View v) {
         Intent mIntent = new Intent(this, ExerciseListScreen.class);
 
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
+
+        Bundle b = new Bundle();
+        b.putString("ppl", whichPPL);
+        mIntent.putExtras(b);
 
         startActivity(mIntent);
     }
@@ -197,7 +216,7 @@ public class StartScreen extends AppCompatActivity {
         /* Jump to next set */
         setCurrent++;
         if(setCurrent > currentExercise.getSets()) {
-            Toast.makeText(this, "Finished this exercise.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Finished "+currentExercise.getExercise(), Toast.LENGTH_SHORT).show();
             setCurrent = 1;
 
 
@@ -215,20 +234,28 @@ public class StartScreen extends AppCompatActivity {
 
     /* Stopwatch (Chronometer) functions */
     public void onStartWatchClicked(View v) {
-        mChronometer.setBase(SystemClock.elapsedRealtime());
+        if(trackingTime == 0) {
+            //starting for first time
+            mChronometer.setBase(SystemClock.elapsedRealtime());
+        } else {
+            //picking up where we left off
+            mChronometer.setBase(SystemClock.elapsedRealtime() - trackingTime);
+        }
         mChronometer.start();
     }
     public void onStopWatchClicked(View v) {
         mChronometer.stop();
+        trackingTime = SystemClock.elapsedRealtime() - mChronometer.getBase();
+
     }
     public void onResetWatchClicked(View v) {
+        trackingTime = 0;
         mChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
 
     /* Button bar functions */
-    public void pplButtonClick(View v) {
-        Toast.makeText(getApplicationContext(), "button bar function called", Toast.LENGTH_SHORT).show();
+    public void pplButton(View v) {
         switch(v.getId()) {
             case R.id.pushButton:
                 whichPPL = "PUSH";
@@ -267,6 +294,4 @@ public class StartScreen extends AppCompatActivity {
                 break;
         }
     }
-
-
 }
