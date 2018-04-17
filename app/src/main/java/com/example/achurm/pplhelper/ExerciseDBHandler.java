@@ -5,6 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -29,12 +35,19 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_FAVORITE = "Favorite";
     private static final String COLUMN_TYPE = "Type";
 
+    private Context mContext;
+    private String DB_PATH;
+
     public ExerciseDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
+        DB_PATH = context.getApplicationInfo().dataDir+"/databases/";
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        /*
         String CREATE_EXERCISE_TABLE =
                 String.format(("CREATE TABLE %s (%s INT PRIMARY KEY,"
                         + " %s TEXT NOT NULL, %s INT NOT NULL, %s INT NOT NULL, %s INT NOT NULL,"
@@ -43,6 +56,39 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
                         COLUMN_REPS, COLUMN_TIME, COLUMN_FAVORITE, COLUMN_TYPE);
 
         db.execSQL(CREATE_EXERCISE_TABLE);
+        */
+    }
+
+    public void createDatabase() throws IOException {
+        /* Check if database exists */
+        File dbFile = new File(DB_PATH + DB_NAME);
+        boolean fileExists = dbFile.exists();
+
+        /* Copy pre-populated database from assets */
+        if(!fileExists) {
+            this.getReadableDatabase();
+            this.close();
+            try {
+                copyDatabase();
+            } catch(IOException mIOException) {
+                throw new Error("ErrorCopyingDataBase");
+            }
+        }
+    }
+
+    private void copyDatabase() throws IOException {
+        InputStream mInput = mContext.getAssets().open(DB_NAME);
+        String outFileName = DB_PATH+DB_NAME;
+        OutputStream mOutput = new FileOutputStream(outFileName);
+
+        byte[] mBuffer = new byte[1024];
+        int mLength;
+        while((mLength = mInput.read(mBuffer)) > 0)
+            mOutput.write(mBuffer, 0, mLength);
+
+        mOutput.flush();
+        mOutput.close();
+        mInput.close();
     }
 
     @Override
@@ -76,7 +122,6 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
         db.close();
     }
-
 
     public Exercise findExercise(String exerciseName) {
         String sqlQuery =

@@ -168,9 +168,7 @@ public class StartScreen extends AppCompatActivity {
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
 
-        Bundle b = new Bundle();
-        b.putString("ppl", whichPPL);
-        mIntent.putExtras(b);
+        mIntent.putExtra("ppl", whichPPL);
 
         startActivity(mIntent);
     }
@@ -178,15 +176,15 @@ public class StartScreen extends AppCompatActivity {
     public void updateSetRepData() {
         /* Get next exercise */
         Exercise nextExerciseTemp = null;
-        if (whichPPL == "PULL") {
+        if (whichPPL.equals("PULL")) {
             currentExercise = pullExercises[currentExerciseNumber];
              nextExerciseTemp = pullExercises[(currentExerciseNumber+1) % pullExercises.length];
         }
-        else if (whichPPL == "PUSH") {
+        else if (whichPPL.equals("PUSH")) {
             currentExercise = pushExercises[currentExerciseNumber];
             nextExerciseTemp = pushExercises[(currentExerciseNumber+1) % pullExercises.length];
         }
-        else if (whichPPL == "LEGS") {
+        else if (whichPPL.equals("LEGS")) {
             currentExercise = legsExercises[currentExerciseNumber];
             nextExerciseTemp = legsExercises[(currentExerciseNumber+1) % pullExercises.length];
         }

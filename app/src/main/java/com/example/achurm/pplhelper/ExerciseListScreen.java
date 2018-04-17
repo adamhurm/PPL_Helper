@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -91,6 +92,7 @@ public class ExerciseListScreen extends AppCompatActivity {
         mLegsButton = (Button) findViewById(R.id.legsButton);
 
         unBundle(getIntent());
+        updateButtonBar();
         fillTextViews();
     }
 
@@ -98,13 +100,17 @@ public class ExerciseListScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         unBundle(this.getIntent());
+        updateButtonBar();
         fillTextViews();
     }
 
     public void unBundle(Intent intent) {
+
         Bundle b = intent.getExtras();
+
         if(b != null) {
-            if(b.getString("ppl") != null) {
+
+            if (b.getString("ppl") != null) {
                 whichPPL = b.getString("ppl");
             }
             /* will have to check for null results if startScreen passes extras with intent */
@@ -116,7 +122,6 @@ public class ExerciseListScreen extends AppCompatActivity {
                         mExercise.getExercise(), mExercise.getSets(), mExercise.getReps(),
                         mExercise.getWeight()));
             }
-
         }
     }
 
@@ -193,9 +198,9 @@ public class ExerciseListScreen extends AppCompatActivity {
         for(int i=0; i<6; i++){
 
             Exercise temp = null;
-            if(whichPPL == "PULL") temp = pullExercises[i];
-            else if(whichPPL == "PUSH") temp = pushExercises[i];
-            else if(whichPPL == "LEGS") temp = legsExercises[i];
+            if(whichPPL.equals("PULL")) temp = pullExercises[i];
+            else if(whichPPL.equals("PUSH")) temp = pushExercises[i];
+            else if(whichPPL.equals("LEGS")) temp = legsExercises[i];
 
             if(temp != null)
                 exerciseTVs.get(i).setText(String.format("%s\n%dx%d\t\t\t\t%d",

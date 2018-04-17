@@ -8,6 +8,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 /**
  * Created by achurm on 3/8/18.
  */
@@ -60,6 +62,11 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             boolean isFavorite = mFavorite.isChecked();
 
             ExerciseDBHandler handler = new ExerciseDBHandler(this);
+            try {
+                handler.createDatabase();
+            } catch (IOException io) {
+                throw new Error("Unable to create database");
+            }
 
             Exercise exercise = handler.findExercise(name, weight, sets, reps);
 
@@ -105,6 +112,11 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             s_weight = Integer.parseInt(mWeightView.getText().toString());
 
         ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+        throw new Error("Unable to create database");
+        }
 
 
         /* check if exercise exists, using exerciseName or all attrs */
@@ -153,6 +165,11 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             int s_weight = Integer.parseInt(mWeightView.getText().toString());
 
             ExerciseDBHandler handler = new ExerciseDBHandler(this);
+            try {
+                handler.createDatabase();
+            } catch (IOException io) {
+                throw new Error("Unable to create database");
+            }
 
             boolean result = handler.deleteExercise(s_name, s_sets, s_reps, s_weight);
 
@@ -186,8 +203,13 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             int weight = Integer.parseInt(mWeightView.getText().toString());
 
             ExerciseDBHandler handler = new ExerciseDBHandler(this);
+            try {
+                handler.createDatabase();
+            } catch (IOException io) {
+                throw new Error("Unable to create database");
+            }
 
-            Exercise exercise = handler.findExercise(name, weight, sets, reps);
+            mExercise = handler.findExercise(name, weight, sets, reps);
         }
     }
 
