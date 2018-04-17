@@ -89,21 +89,23 @@ public class ExerciseListScreen extends AppCompatActivity {
         mPushButton = (Button) findViewById(R.id.pushButton);
         mPullButton = (Button) findViewById(R.id.pullButton);
         mLegsButton = (Button) findViewById(R.id.legsButton);
-        
-        fillTextViews();
 
+        unBundle(getIntent());
+        fillTextViews();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Bundle b = this.getIntent().getExtras();
+    protected void onResume() {
+        super.onResume();
+        unBundle(this.getIntent());
+        fillTextViews();
+    }
 
+    public void unBundle(Intent intent) {
+        Bundle b = intent.getExtras();
         if(b != null) {
-
             if(b.getString("ppl") != null) {
                 whichPPL = b.getString("ppl");
-                mNumber = 1;
             }
             /* will have to check for null results if startScreen passes extras with intent */
             else {
@@ -115,7 +117,6 @@ public class ExerciseListScreen extends AppCompatActivity {
                         mExercise.getWeight()));
             }
 
-            fillTextViews();
         }
     }
 
@@ -131,11 +132,9 @@ public class ExerciseListScreen extends AppCompatActivity {
     public void onSaveButtonClick(View v) {
         Intent mIntent = new Intent(this, StartScreen.class);
 
-        /*
         Bundle b = new Bundle();
-        b.putParcelable("exercise", mExercise);
+        b.putString("ppl", whichPPL);
         mIntent.putExtras(b);
-        */
 
         if(USE_FLAG)
             mIntent.addFlags(mSaveFlag);
@@ -173,6 +172,7 @@ public class ExerciseListScreen extends AppCompatActivity {
         if(whichPPL == "PULL") mExercise = pullExercises[mNumber-1]; //hardcoded exercises
         else if(whichPPL == "PUSH") mExercise = pushExercises[mNumber-1]; //hardcoded exercises
         else if(whichPPL == "LEGS") mExercise = legsExercises[mNumber-1]; //hardcoded exercises
+        else mExercise = pullExercises[mNumber-1];
 
         //add exercise and TextView number to bundle
         b.putParcelable("exercise", mExercise);

@@ -197,9 +197,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
         /* Change this to onResume - separate filling code to function, call from onCreate and onNewIntent */
         super.onResume();
 
-        unBundle(this.getIntent());
-
-        // setIntent(intent);
+        unBundle(getIntent());
     }
 
     public void unBundle(Intent intent) {

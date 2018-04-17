@@ -84,8 +84,6 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        Bundle b = getIntent().getExtras();
-
         /* Weight, Set, Rep data */
         weightData = (TextView)findViewById(R.id.weightData);
         setData = (TextView)findViewById(R.id.setData);
