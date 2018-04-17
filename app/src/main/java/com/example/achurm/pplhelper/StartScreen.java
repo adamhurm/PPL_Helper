@@ -41,7 +41,15 @@ public class StartScreen extends AppCompatActivity {
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
+    /*
+    TODO: Pull last 6 exercises using whichPPL, store in Exercise array
+    TODO: Pull last 3 exercises using ExerciseName, handle cases where there aren't 3
+    TODO: Pull timestamps for last 3 exercises, store in String array
+    TODO: Change pre-populated database so that there are 2 of each Exercise (for history)
+    TODO: Pass Exercise array through Bundle to ExerciseListScreen
+    TODO: Add button to bottom right that leads to VoiceMemo screen
 
+     */
 
     /* This will be replaced with non-dummy data once a user accumulates a history of workouts */
     private static final Exercise[] dummyExercises = {

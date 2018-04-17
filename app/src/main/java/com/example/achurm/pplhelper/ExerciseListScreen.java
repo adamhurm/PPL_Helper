@@ -26,6 +26,10 @@ public class ExerciseListScreen extends AppCompatActivity {
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
     private static final int mEditFlag = Intent.FLAG_ACTIVITY_NO_HISTORY;
 
+    /*
+    TODO: Check favorites for last 6 exercises, store in boolean array
+    TODO: Pull exercise array out of intent bundle
+    */
 
     /* This will fill the app with initial exercises */
     private static Exercise[] pullExercises = {
