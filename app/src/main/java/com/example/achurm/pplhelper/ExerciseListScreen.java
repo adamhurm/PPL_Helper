@@ -115,6 +115,7 @@ public class ExerciseListScreen extends AppCompatActivity {
             }
             /* will have to check for null results if startScreen passes extras with intent */
             else {
+                whichPPL = b.getString("type");
                 mExercise = b.getParcelable("exercise");
                 mNumber = b.getInt("number");
                 /* Refresh updated textViews */
@@ -174,10 +175,9 @@ public class ExerciseListScreen extends AppCompatActivity {
                 break;
             default: mNumber = 1;
         }
-        if(whichPPL == "PULL") mExercise = pullExercises[mNumber-1]; //hardcoded exercises
-        else if(whichPPL == "PUSH") mExercise = pushExercises[mNumber-1]; //hardcoded exercises
-        else if(whichPPL == "LEGS") mExercise = legsExercises[mNumber-1]; //hardcoded exercises
-        else mExercise = pullExercises[mNumber-1];
+        if(whichPPL.equals("PULL")) mExercise = pullExercises[mNumber-1]; //hardcoded exercises
+        else if(whichPPL.equals("PUSH")) mExercise = pushExercises[mNumber-1]; //hardcoded exercises
+        else if(whichPPL.equals("LEGS")) mExercise = legsExercises[mNumber-1]; //hardcoded exercises
 
         //add exercise and TextView number to bundle
         b.putParcelable("exercise", mExercise);

@@ -40,7 +40,36 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
         mFavorite = (CheckBox) findViewById(R.id.toggleFavorite);
 
         unBundle(getIntent());
+        updateFavorite();
 
+    }
+    /* Switching with flags */
+    @Override
+    protected void onResume() {
+        /* Change this to onResume - separate filling code to function, call from onCreate and onNewIntent */
+        super.onResume();
+
+        unBundle(getIntent());
+        updateFavorite();
+    }
+
+    public void unBundle(Intent intent) {
+        Bundle b = intent.getExtras();
+        /* Check if bundle has content, if it does, assign exercise information to TVs */
+        if(b != null) {
+            mExercise = b.getParcelable("exercise");
+            mNumber = b.getInt("number");
+            mExerciseType = b.getString("type");
+
+            if(mExercise == null)
+                Toast.makeText(this, "Exercise is null", Toast.LENGTH_SHORT).show();
+            else {
+                mExerciseNameView.setText(mExercise.getExercise());
+                mSetsView.setText(Integer.toString(mExercise.getSets()));
+                mRepsView.setText(Integer.toString(mExercise.getReps()));
+                mWeightView.setText(Integer.toString(mExercise.getWeight()));
+            }
+        }
     }
 
     public boolean addClick(View v) {
@@ -70,6 +99,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
 
             Exercise exercise = handler.findExercise(name, weight, sets, reps);
 
+            /* add new exercise to database */
             if (exercise == null) {
                 mExercise = new Exercise(name, weight, sets, reps);
                 handler.addExercise(mExercise, isFavorite, mExerciseType);
@@ -77,10 +107,19 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
                     String.format("%s exercise was added to the database.", name),
                     Toast.LENGTH_SHORT).show();
             }
-
-            else Toast.makeText(this,
-                    String.format("%s exercise already exists in the database with the given info.", name),
-                    Toast.LENGTH_SHORT).show();
+            /* update exercise favorite & timestamp */
+            else if(handler.testFavorite(name, sets, reps, weight) != isFavorite) {
+                handler.updateExercise(name, sets, reps, weight, isFavorite);
+                Toast.makeText(this,
+                        String.format("%s exercise was marked as favorite.", name),
+                        Toast.LENGTH_SHORT).show();
+            }
+            /* do nothing, database is up to date */
+            else {
+                Toast.makeText(this,
+                        String.format("%s exercise already exists in the database with the given info.", name),
+                        Toast.LENGTH_SHORT).show();
+            }
 
             /* Reset TextViews */
             mExerciseNameView.setText("");
@@ -185,60 +224,36 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
         }
     }
 
-    public void favoriteClick(View v) {
-        /* Check for empty fields */
-        if(mExerciseNameView.getText().toString().isEmpty()
-                || mSetsView.getText().toString().isEmpty()
-                || mRepsView.getText().toString().isEmpty()
-                || mWeightView.getText().toString().isEmpty()) {
-            Toast.makeText(this,
-                    "Unable to add exercise.\nPlease check that all fields are filled in.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            /* collect variables */
-            String name = mExerciseNameView.getText().toString();
-            int sets = Integer.parseInt(mSetsView.getText().toString());
-            int reps = Integer.parseInt(mRepsView.getText().toString());
-            int weight = Integer.parseInt(mWeightView.getText().toString());
 
-            ExerciseDBHandler handler = new ExerciseDBHandler(this);
-            try {
-                handler.createDatabase();
-            } catch (IOException io) {
-                throw new Error("Unable to create database");
-            }
+    public void updateFavorite() {
+        /* collect search variables */
+        String s_name = mExerciseNameView.getText().toString();
+        int s_sets = -1;
+        int s_reps = -1;
+        int s_weight = -1;
+        /* check for partial fields */
+        if(!mSetsView.getText().toString().isEmpty())
+            s_sets = Integer.parseInt(mSetsView.getText().toString());
+        if(!mRepsView.getText().toString().isEmpty())
+            s_reps = Integer.parseInt(mRepsView.getText().toString());
+        if(!mWeightView.getText().toString().isEmpty())
+            s_weight = Integer.parseInt(mWeightView.getText().toString());
 
-            mExercise = handler.findExercise(name, weight, sets, reps);
+        ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
         }
-    }
 
-    /* Switching with flags */
-    @Override
-    protected void onResume() {
-        /* Change this to onResume - separate filling code to function, call from onCreate and onNewIntent */
-        super.onResume();
+        /* check if exercise exists, using exerciseName or all attrs */
 
-        unBundle(getIntent());
-    }
+        boolean isFavorite = false;
 
-    public void unBundle(Intent intent) {
-        Bundle b = intent.getExtras();
-        /* Check if bundle has content, if it does, assign exercise information to TVs */
-        if(b != null) {
-            mExercise = b.getParcelable("exercise");
-            mNumber = b.getInt("number");
-            mExerciseType = b.getString("type");
-
-            if(mExercise == null)
-                Toast.makeText(this, "Exercise is null", Toast.LENGTH_SHORT).show();
-            else {
-                mExerciseNameView.setText(mExercise.getExercise());
-                mSetsView.setText(Integer.toString(mExercise.getSets()));
-                mRepsView.setText(Integer.toString(mExercise.getReps()));
-                mWeightView.setText(Integer.toString(mExercise.getWeight()));
-            }
+        if(!s_name.isEmpty() || s_sets != -1 || s_reps != -1 || s_weight != -1) {
+            isFavorite = handler.testFavorite(s_name, s_sets, s_reps, s_weight);
         }
+        mFavorite.setChecked(isFavorite);
     }
 
     /* Switch back to Exercise Edit Screen */
@@ -251,6 +266,7 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             Bundle b = new Bundle();
             b.putParcelable("exercise", mExercise);
             b.putInt("number", mNumber);
+            b.putString("type", mExerciseType);
             mIntent.putExtras(b);
 
             if(USE_FLAG)

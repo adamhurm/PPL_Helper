@@ -40,14 +40,16 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
     public ExerciseDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        //store context and DB_PATH for creating new database
         mContext = context;
         DB_PATH = context.getApplicationInfo().dataDir+"/databases/";
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        /* The logic here has been changed in order to handle IO Errors, see CreateDatabase below.
 
-        /*
         String CREATE_EXERCISE_TABLE =
                 String.format(("CREATE TABLE %s (%s INT PRIMARY KEY,"
                         + " %s TEXT NOT NULL, %s INT NOT NULL, %s INT NOT NULL, %s INT NOT NULL,"
@@ -59,12 +61,13 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         */
     }
 
+    /* call copyDatabase if db file does not exist */
     public void createDatabase() throws IOException {
-        /* Check if database exists */
+        /* check if database exists */
         File dbFile = new File(DB_PATH + DB_NAME);
         boolean fileExists = dbFile.exists();
 
-        /* Copy pre-populated database from assets */
+        /* copy pre-populated database from assets */
         if(!fileExists) {
             this.getReadableDatabase();
             this.close();
@@ -76,16 +79,20 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         }
     }
 
+    /* pull a database from assets instead of creating one from scratch. */
     private void copyDatabase() throws IOException {
+        //create input and output streams
         InputStream mInput = mContext.getAssets().open(DB_NAME);
         String outFileName = DB_PATH+DB_NAME;
         OutputStream mOutput = new FileOutputStream(outFileName);
 
+        //use buffer to copy between streams
         byte[] mBuffer = new byte[1024];
         int mLength;
         while((mLength = mInput.read(mBuffer)) > 0)
             mOutput.write(mBuffer, 0, mLength);
 
+        //close everything out to avoid memory leaks
         mOutput.flush();
         mOutput.close();
         mInput.close();
@@ -94,9 +101,15 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXERCISE);
-        onCreate(db);
+        //onCreate(db);
+        try {
+            createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
+        }
     }
 
+    /* add Exercise object and specify favorite & type */
     public void addExercise(Exercise exercise, boolean isFavorite, String exerciseType) {
         ContentValues values = new ContentValues();
 
@@ -123,6 +136,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    /* find exercise using only name */
     public Exercise findExercise(String exerciseName) {
         String sqlQuery =
                 String.format("SELECT * FROM %s WHERE %s = \'%s\'",
@@ -150,6 +164,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
     }
 
+    /* find exercise using name, weight, sets, reps */
     public Exercise findExercise(String exerciseName, int weight, int sets, int reps) {
         String sqlQuery =
                 String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
@@ -178,6 +193,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
     }
 
+    /* delete exercise using set, reps, weight */
     public boolean deleteExercise(String exerciseName, int sets, int reps, int weight) {
         boolean result = false;
 
@@ -208,12 +224,36 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         return result;
 
     }
-
-    public void updateExercise(String exerciseName, int sets, int reps, int weight) {
+    public boolean testFavorite(String exerciseName, int sets, int reps, int weight) {
         String sqlQuery =
-                String.format("UPDATE %s SET %s=%d WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
-                        TABLE_EXERCISE, COLUMN_FAVORITE, 1, COLUMN_NAME, exerciseName,
-                        COLUMN_WEIGHT, weight, COLUMN_SETS, sets, COLUMN_REPS, reps);
+                String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                        TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight,
+                        COLUMN_SETS, sets, COLUMN_REPS, reps);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor myCursor = db.rawQuery(sqlQuery, null);
+
+        int isFavorite = 0;
+
+        if(myCursor.moveToFirst()) {
+            isFavorite = myCursor.getInt(6);
+            myCursor.close();
+        }
+
+        db.close();
+
+        return ((isFavorite == 1)? true : false);
+    }
+    /* Update favorite and timestamp */
+    public void updateExercise(String exerciseName, int sets, int reps, int weight, boolean favorite) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(new Date());
+
+        String sqlQuery =
+                String.format("UPDATE %s SET %s=%d, %s=\'%s\' WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                        TABLE_EXERCISE, COLUMN_FAVORITE, (favorite? 1 : 0), COLUMN_TIME, date,
+                        COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight, COLUMN_SETS, sets, COLUMN_REPS, reps);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
