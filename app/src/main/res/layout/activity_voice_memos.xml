@@ -140,7 +140,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
         android:onClick="listAudioFiles"
         android:text="List All Files"
         app:layout_constraintEnd_toEndOf="parent"
