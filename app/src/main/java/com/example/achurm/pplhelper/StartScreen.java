@@ -3,6 +3,7 @@ package com.example.achurm.pplhelper;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.SystemClock;
+import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -255,6 +256,16 @@ public class StartScreen extends AppCompatActivity {
     public void onResetWatchClicked(View v) {
         trackingTime = 0;
         mChronometer.setBase(SystemClock.elapsedRealtime());
+    }
+
+    /* Voice memo functions */
+    public void onVoiceMemoClick(View v) {
+        Intent mIntent = new Intent(this, VoiceMemos.class);
+
+        if(USE_FLAG)
+            mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+        startActivity(mIntent);
     }
 
 

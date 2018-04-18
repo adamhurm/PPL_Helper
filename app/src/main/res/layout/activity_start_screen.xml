@@ -252,8 +252,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_column="1"
-                    android:layout_columnWeight="1"
                     android:layout_columnSpan="2"
+                    android:layout_columnWeight="1"
                     android:layout_row="0"
                     android:layout_rowWeight="0"
                     android:text="@string/history"
@@ -456,6 +456,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/voiceMemoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="onVoiceMemoClick"
+        android:text="Voice Memos"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
