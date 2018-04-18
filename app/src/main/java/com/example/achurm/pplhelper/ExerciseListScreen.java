@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ExerciseListScreen extends AppCompatActivity {
@@ -16,6 +18,10 @@ public class ExerciseListScreen extends AppCompatActivity {
     private ArrayList<TextView> exerciseTVs;
 
     private Exercise mExercise;
+    private Exercise mExercises[] = new Exercise[6];
+    private CheckBox mFavs[] = new CheckBox[6];
+    private int mFavorites[] = new int[6];
+
     private int mNumber;
 
     private Button mPushButton, mPullButton, mLegsButton;
@@ -26,60 +32,10 @@ public class ExerciseListScreen extends AppCompatActivity {
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
     private static final int mEditFlag = Intent.FLAG_ACTIVITY_NO_HISTORY;
 
-    /*
-    TODO: Check favorites for last 6 exercises, store in boolean array
-    TODO: Pull exercise array out of intent bundle
-    */
-
-    /* This will fill the app with initial exercises */
-    private static Exercise[] pullExercises = {
-            new Exercise("Deadlift", 200, 3, 5),
-            new Exercise("Barbell Rows", 90, 3, 5),
-            new Exercise("Pullups", 0, 3, 8),
-            new Exercise("Seated Cable Rows", 160, 3, 12),
-            new Exercise("Dumbbell Curls", 40, 4, 12),
-            new Exercise("Face Pulls", 40, 5, 15)
-    };
-
-    private static Exercise[] pushExercises = {
-            new Exercise("Bench Press", 100, 5, 5),
-            new Exercise("Overhead Press", 90, 3, 5),
-            new Exercise("Incline Bench Press", 70, 3, 5),
-            new Exercise("DB Side Lateral Raise", 10, 3, 12),
-            new Exercise("Triceps Pushdown", 50, 3, 12),
-            new Exercise("Overhead Triceps Extension", 50, 3, 12)
-    };
-
-    private static Exercise[] legsExercises = {
-            new Exercise("Squat", 180, 3, 5),
-            new Exercise("Romanian Deadlift", 90, 3, 12),
-            new Exercise("Leg Press", 240, 3, 12),
-            new Exercise("Leg Curls", 70, 3, 12),
-            new Exercise("Calf Raises", 50, 3, 12),
-            new Exercise("Weighted Crunches", 100, 3, 12)
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_list_screen);
-
-        /*pullExerciseTV = new TextView[6][2]; //hardcoded for now
-
-        /*
-        pullExerciseTV[0][0] = (TextView)findViewById(R.id.editEx1op1);
-        pullExerciseTV[0][1] = (TextView)findViewById(R.id.editEx1op2);
-        pullExerciseTV[1][0] = (TextView)findViewById(R.id.editEx2op1);
-        pullExerciseTV[1][1] = (TextView)findViewById(R.id.editEx2op2);
-        pullExerciseTV[2][0] = (TextView)findViewById(R.id.editEx3op1);
-        pullExerciseTV[2][1] = (TextView)findViewById(R.id.editEx3op2);
-        pullExerciseTV[3][0] = (TextView)findViewById(R.id.editEx4op1);
-        pullExerciseTV[3][1] = (TextView)findViewById(R.id.editEx4op2);
-        pullExerciseTV[4][0] = (TextView)findViewById(R.id.editEx5op1);
-        pullExerciseTV[4][1] = (TextView)findViewById(R.id.editEx5op2);
-        pullExerciseTV[5][0] = (TextView)findViewById(R.id.editEx6op1);
-        pullExerciseTV[5][1] = (TextView)findViewById(R.id.editEx6op2);
-        */
 
         exerciseTVs = new ArrayList<TextView>();
         exerciseTVs.add((TextView)findViewById(R.id.nameEx1));
@@ -94,6 +50,14 @@ public class ExerciseListScreen extends AppCompatActivity {
         mPushButton = (Button) findViewById(R.id.pushButton);
         mPullButton = (Button) findViewById(R.id.pullButton);
         mLegsButton = (Button) findViewById(R.id.legsButton);
+
+        mFavs[0] = findViewById(R.id.favEx1);
+        mFavs[1] = findViewById(R.id.favEx2);
+        mFavs[2] = findViewById(R.id.favEx3);
+        mFavs[3] = findViewById(R.id.favEx4);
+        mFavs[4] = findViewById(R.id.favEx5);
+        mFavs[5] = findViewById(R.id.favEx6);
+
 
         unBundle(getIntent());
         updateButtonBar();
@@ -116,6 +80,17 @@ public class ExerciseListScreen extends AppCompatActivity {
 
             if (b.getString("ppl") != null) {
                 whichPPL = b.getString("ppl");
+            }
+            if (b.getIntArray("favorites") != null) { //we passed data from StartScreen
+                //DataBus temp = (DataBus) b.getSerializable("databus");
+                mExercises[0] = b.getParcelable("exercise0");
+                mExercises[1] = b.getParcelable("exercise1");
+                mExercises[2] = b.getParcelable("exercise2");
+                mExercises[3] = b.getParcelable("exercise3");
+                mExercises[4] = b.getParcelable("exercise4");
+                mExercises[5] = b.getParcelable("exercise5");
+
+                mFavorites = b.getIntArray("favorites"); //.getFavorites();
             }
             /* will have to check for null results if startScreen passes extras with intent */
             else {
@@ -144,6 +119,12 @@ public class ExerciseListScreen extends AppCompatActivity {
 
         Bundle b = new Bundle();
         b.putString("ppl", whichPPL);
+        b.putParcelable("exercise0", mExercises[0]);
+        b.putParcelable("exercise1", mExercises[1]);
+        b.putParcelable("exercise2", mExercises[2]);
+        b.putParcelable("exercise3", mExercises[3]);
+        b.putParcelable("exercise4", mExercises[4]);
+        b.putParcelable("exercise5", mExercises[5]);
         mIntent.putExtras(b);
 
         if(USE_FLAG)
@@ -179,9 +160,7 @@ public class ExerciseListScreen extends AppCompatActivity {
                 break;
             default: mNumber = 1;
         }
-        if(whichPPL.equals("PULL")) mExercise = pullExercises[mNumber-1]; //hardcoded exercises
-        else if(whichPPL.equals("PUSH")) mExercise = pushExercises[mNumber-1]; //hardcoded exercises
-        else if(whichPPL.equals("LEGS")) mExercise = legsExercises[mNumber-1]; //hardcoded exercises
+        mExercise = mExercises[mNumber-1];
 
         //add exercise and TextView number to bundle
         b.putParcelable("exercise", mExercise);
@@ -201,18 +180,18 @@ public class ExerciseListScreen extends AppCompatActivity {
         /* Fill TextViews */
         for(int i=0; i<6; i++){
 
-            Exercise temp = null;
-            if(whichPPL.equals("PULL")) temp = pullExercises[i];
-            else if(whichPPL.equals("PUSH")) temp = pushExercises[i];
-            else if(whichPPL.equals("LEGS")) temp = legsExercises[i];
+            Exercise temp = mExercises[i];
 
             if(temp != null)
                 exerciseTVs.get(i).setText(String.format("%s\n%dx%d\t\t\t\t%d",
                     temp.getExercise(), temp.getSets(), temp.getReps(), temp.getWeight()));
         }
+        for(int i=0; i<6; i++) {
+            boolean isFav = (mFavorites[i]==1);
+            mFavs[i].setChecked(isFav);
+        }
     }
 
-    /* Code for 6 favorite buttons, this is being moved to customExerciseScreen for now
     public void onFavoriteButtonClick(View v) {
         int favIndex = 0;
         switch(v.getId()) {
@@ -236,24 +215,19 @@ public class ExerciseListScreen extends AppCompatActivity {
                 break;
         }
 
-        ExerciseDBHandler dbhandler = new ExerciseDBHandler(this);
-
-        String temp = exerciseTVs.get(favIndex).getText().toString();
-        String[] tokens = temp.split("\\s+");
-        String name = tokens[0];
-        int weight = Integer.parseInt(exerciseTVs.get(favIndex).getText().toString();
-        int sets = Integer.parseInt(mSetsView.getText().toString());
-        int reps = Integer.parseInt(mRepsView.getText().toString());
-
-        dbhandler.findExercise(name, weight, sets, reps);
-
-
-        String query = "UPDATE Exercises SET Favorite = 1";
-         + (FavoriteButton.isEnabled() ? 1 : 0)
+        boolean isFavorite = !(mFavorites[favIndex] == 1); //reverse current favorite
+        ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
+        }
+        Exercise temp = mExercises[favIndex];
+        handler.updateExercise(temp.getExercise(), temp.getSets(), temp.getReps(), temp.getWeight(), isFavorite);
+        fetchHistory();
+        fillTextViews();
     }
-    */
 
-    /* Button bar functions */
     /* Button bar functions */
     public void pplButtonClick(View v) {
         switch(v.getId()) {
@@ -268,6 +242,7 @@ public class ExerciseListScreen extends AppCompatActivity {
                 break;
         }
         updateButtonBar();
+        fetchHistory();
         fillTextViews();
     }
     public void updateButtonBar() {
@@ -293,5 +268,17 @@ public class ExerciseListScreen extends AppCompatActivity {
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
         }
+    }
+    public void fetchHistory() {
+        ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
+        }
+
+        DataBus temp = handler.getExercises(whichPPL);
+        mExercises = temp.getExercises();
+        mFavorites = temp.getFavorites();
     }
 }

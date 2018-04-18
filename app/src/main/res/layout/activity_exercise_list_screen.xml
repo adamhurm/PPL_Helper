@@ -75,7 +75,7 @@
                     android:id="@+id/nameEx1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />
@@ -105,7 +105,7 @@
                     android:id="@+id/nameEx2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />
@@ -135,7 +135,7 @@
                     android:id="@+id/nameEx3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />
@@ -165,7 +165,7 @@
                     android:id="@+id/nameEx4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />
@@ -195,7 +195,7 @@
                     android:id="@+id/nameEx5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />
@@ -225,7 +225,7 @@
                     android:id="@+id/nameEx6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:text="@string/dummy_exercise_set_x_rep"
                     android:textAlignment="viewStart"
                     android:textSize="20sp" />

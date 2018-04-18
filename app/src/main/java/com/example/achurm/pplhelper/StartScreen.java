@@ -18,7 +18,6 @@ import static java.util.Locale.US;
 
 public class StartScreen extends AppCompatActivity {
     /* Exercise Data */
-    private Exercise[] recentExercise;
     private Exercise currentExercise;
     private String whichPPL = "PUSH";
     private int currentExerciseNumber = 0;
@@ -33,9 +32,7 @@ public class StartScreen extends AppCompatActivity {
     /* Timer */
     private Chronometer mChronometer;
     private long trackingTime = 0;
-    /* No need for pointers to buttons at the moment
-    private Button startWatchButton, stopWatchButton, resetWatchButton;
-    */
+
 
     /* Button bar */
     private Button mPullButton, mPushButton, mLegsButton;
@@ -43,50 +40,6 @@ public class StartScreen extends AppCompatActivity {
     /* Intent flags */
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
-
-    /*
-    TODO: Pull last 6 exercises using whichPPL, store in Exercise array
-    TODO: Pull last 3 exercises using ExerciseName, handle cases where there aren't 3
-    TODO: Pull timestamps for last 3 exercises, store in String array
-    TODO: Change pre-populated database so that there are 2 of each Exercise (for history)
-    TODO: Pass Exercise array through Bundle to ExerciseListScreen
-     */
-
-    /* This will be replaced with non-dummy data once a user accumulates a history of workouts */
-    private static final Exercise[] dummyExercises = {
-            new Exercise("Deadlift",205, 3,5),
-            new Exercise("Deadlift", 200, 3,5),
-            new Exercise("Deadlift", 195, 3,5),
-            new Exercise("Deadlift", 190, 3,5)
-    };
-
-    /* This will fill the app with initial exercises */
-    private static Exercise[] pullExercises = {
-            new Exercise("Deadlift", 200, 3, 5),
-            new Exercise("Barbell Rows", 90, 3, 5),
-            new Exercise("Pullups", 0, 3, 8),
-            new Exercise("Seated Cable Rows", 160, 3, 12),
-            new Exercise("Dumbbell Curls", 40, 4, 12),
-            new Exercise("Face Pulls", 40, 5, 15)
-    };
-
-    private static Exercise[] pushExercises = {
-            new Exercise("Bench Press", 100, 5, 5),
-            new Exercise("Overhead Press", 90, 3, 5),
-            new Exercise("Incline Bench Press", 70, 3, 5),
-            new Exercise("DB Side Lateral Raise", 10, 3, 12),
-            new Exercise("Triceps Pushdown", 50, 3, 12),
-            new Exercise("Overhead Triceps Extension", 50, 3, 12)
-    };
-
-    private static Exercise[] legsExercises = {
-            new Exercise("Squat", 180, 3, 5),
-            new Exercise("Romanian Deadlift", 90, 3, 12),
-            new Exercise("Leg Press", 240, 3, 12),
-            new Exercise("Leg Curls", 70, 3, 12),
-            new Exercise("Calf Raises", 50, 3, 12),
-            new Exercise("Weighted Crunches", 100, 3, 12)
-    };
 
     private Exercise mExercises[] = new Exercise[6];
     private String mDates[] = new String[6];
@@ -108,11 +61,7 @@ public class StartScreen extends AppCompatActivity {
         /* Timer pointers */
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         mChronometer.setBase(SystemClock.elapsedRealtime());
-        /* No need for pointers to buttons at the moment
-        startWatchButton = (Button)findViewById(R.id.startWatchButton);
-        stopWatchButton = (Button)findViewById(R.id.stopWatchButton);
-        resetWatchButton = (Button)findViewById(R.id.resetWatchButton);
-        */
+
 
         /* Button bar pointers */
         mPushButton = (Button) findViewById(R.id.pushButton);
@@ -124,14 +73,9 @@ public class StartScreen extends AppCompatActivity {
 
         fetchInfo();
 
-        /* Recent Exercise data */
-        recentExercise = new Exercise[3];
         recentExerciseTV = new TextView[3][4];
 
-        /* Fill with Dummy Data */
-        System.arraycopy(dummyExercises, 1, recentExercise, 0, recentExercise.length);
-
-        /* TextViews: 0 "Exercise", 1 "Weight", 2 "Set"x"Rep" */
+        /* TextViews: 0 "Exercise", 1 "Weight", 2 "Set"x"Rep", 3 "Date" */
         recentExerciseTV[0][0] = (TextView)findViewById(R.id.entry_exercise1);
         recentExerciseTV[1][0] = (TextView)findViewById(R.id.entry_exercise2);
         recentExerciseTV[2][0] = (TextView)findViewById(R.id.entry_exercise3);
@@ -164,11 +108,21 @@ public class StartScreen extends AppCompatActivity {
         if(b.getString("ppl") != null) {
             whichPPL = b.getString("ppl");
         }
-        if(b.getSerializable("databus") != null) {
-            DataBus temp = (DataBus) b.getSerializable("databus");
+        if(b.getParcelable("exercise0") != null) {
+
+            mExercises[0] = b.getParcelable("exercise0");
+            mExercises[1] = b.getParcelable("exercise1");
+            mExercises[2] = b.getParcelable("exercise2");
+            mExercises[3] = b.getParcelable("exercise3");
+            mExercises[4] = b.getParcelable("exercise4");
+            mExercises[5] = b.getParcelable("exercise5");
+
+            mFavorites = b.getIntArray("favorites");
+            mDates = b.getStringArray("dates");
+            /*DataBus temp = (DataBus) b.getSerializable("databus");
             mExercises = temp.getExercises();
             mDates = temp.getDates();
-            mFavorites = temp.getFavorites();
+            mFavorites = temp.getFavorites();*/
         }
         updateButtonBar();
         updateSetRepData();
@@ -180,7 +134,27 @@ public class StartScreen extends AppCompatActivity {
         if(USE_FLAG)
             mIntent.addFlags(mFlag);
 
-        mIntent.putExtra("ppl", whichPPL);
+        Bundle b = new Bundle();
+        b.putString("ppl", whichPPL);
+
+        b.putParcelable("exercise0", mExercises[0]);
+        b.putParcelable("exercise1", mExercises[1]);
+        b.putParcelable("exercise2", mExercises[2]);
+        b.putParcelable("exercise3", mExercises[3]);
+        b.putParcelable("exercise4", mExercises[4]);
+        b.putParcelable("exercise5", mExercises[5]);
+
+        b.putStringArray("dates", mDates);
+        b.putIntArray("favorites", mFavorites);
+        /*
+        DataBus temp = new DataBus("exercises");
+        temp.setExercises(mExercises);
+        temp.setDates(mDates);
+        temp.setFavorites(mFavorites);
+        b.putSerializable("databus", temp);
+        */
+
+        mIntent.putExtras(b);
 
         startActivity(mIntent);
     }
