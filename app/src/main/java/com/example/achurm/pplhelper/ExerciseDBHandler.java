@@ -262,4 +262,88 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         db.close();
 
     }
+
+    public DataBus getExercises(String whichPPL) {
+        String sqlQuery =
+                String.format("SELECT * FROM %s WHERE %s=\'%s\' LIMIT 6",
+                        TABLE_EXERCISE, COLUMN_TYPE, whichPPL);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor myCursor = db.rawQuery(sqlQuery, null);
+
+        Exercise exercises[] = new Exercise[6];
+        int favorites[] = new int[6];
+        String dates[] = new String[6];
+        int cursorPos;
+
+        if(myCursor.moveToFirst()) {
+
+            do {
+                cursorPos = myCursor.getPosition();
+
+                String tmpExercise = myCursor.getString(1);
+                int tmpWeights = myCursor.getInt(2);
+                int tmpSets = myCursor.getInt(3);
+                int tmpReps = myCursor.getInt(4);
+                String tmpDate = myCursor.getString(5);
+                int tmpFavorite = myCursor.getInt(6);
+                //String tmpType = myCursor.getString(7); I already selected by this criteria
+
+                exercises[cursorPos] = new Exercise(tmpExercise, tmpWeights, tmpSets, tmpReps);
+                favorites[cursorPos] = tmpFavorite;
+                dates[cursorPos] = tmpDate;
+                myCursor.moveToNext();
+            } while (!myCursor.isAfterLast());
+        }
+
+        myCursor.close();
+        db.close();
+
+        DataBus objects = new DataBus("exercises");
+        objects.setExercises(exercises);
+        objects.setFavorites(favorites);
+        objects.setDates(dates);
+        return objects;
+    }
+
+    public DataBus getHistory(String exerciseName){
+        String sqlQuery =
+                String.format("SELECT * FROM %s WHERE %s=\'%s\' LIMIT 3",
+                        TABLE_EXERCISE, COLUMN_NAME, exerciseName);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor myCursor = db.rawQuery(sqlQuery, null);
+
+        Exercise exercises[] = new Exercise[3];
+        String dates[] = new String[3];
+        int cursorPos;
+
+        if(myCursor.moveToFirst()) {
+
+            do {
+                cursorPos = myCursor.getPosition();
+
+                String tmpExercise = myCursor.getString(1);
+                int tmpWeights = myCursor.getInt(2);
+                int tmpSets = myCursor.getInt(3);
+                int tmpReps = myCursor.getInt(4);
+                String tmpDate = myCursor.getString(5);
+
+                exercises[cursorPos] = new Exercise(tmpExercise, tmpWeights, tmpSets, tmpReps);
+                dates[cursorPos] = tmpDate;
+                myCursor.moveToNext();
+            } while (!myCursor.isAfterLast());
+        }
+
+        myCursor.close();
+        db.close();
+
+        DataBus objects = new DataBus("history");
+        objects.setExercises(exercises);
+        objects.setDates(dates);
+        return objects;
+
+    }
 }

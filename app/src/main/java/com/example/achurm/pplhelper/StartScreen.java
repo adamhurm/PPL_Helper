@@ -12,6 +12,8 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import static java.util.Locale.US;
 
 public class StartScreen extends AppCompatActivity {
@@ -20,7 +22,7 @@ public class StartScreen extends AppCompatActivity {
     private Exercise currentExercise;
     private String whichPPL = "PUSH";
     private int currentExerciseNumber = 0;
-    private int setCurrent = 1;
+    private int currentSetNumber = 1;
 
     /* Exercise TVs */
     private TextView exercise;
@@ -48,8 +50,6 @@ public class StartScreen extends AppCompatActivity {
     TODO: Pull timestamps for last 3 exercises, store in String array
     TODO: Change pre-populated database so that there are 2 of each Exercise (for history)
     TODO: Pass Exercise array through Bundle to ExerciseListScreen
-    TODO: Add button to bottom right that leads to VoiceMemo screen
-
      */
 
     /* This will be replaced with non-dummy data once a user accumulates a history of workouts */
@@ -88,6 +88,13 @@ public class StartScreen extends AppCompatActivity {
             new Exercise("Weighted Crunches", 100, 3, 12)
     };
 
+    private Exercise mExercises[] = new Exercise[6];
+    private String mDates[] = new String[6];
+    private int mFavorites[] = new int[6];
+
+    private Exercise mHistoryExercises[] = new Exercise[3];
+    private String mHistoryDates[] = new String[3];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,27 +119,14 @@ public class StartScreen extends AppCompatActivity {
         mPullButton = (Button) findViewById(R.id.pullButton);
         mLegsButton = (Button) findViewById(R.id.legsButton);
 
-        /* Exercise data */
-        //fill current exercise
-        if(whichPPL == "PULL") currentExercise = pullExercises[currentExerciseNumber];
-        else if(whichPPL == "PUSH") currentExercise = pushExercises[currentExerciseNumber];
-        else if(whichPPL == "PUSH") currentExercise = legsExercises[currentExerciseNumber];
         exercise = (TextView)findViewById(R.id.exercise);
-        exercise.setText(currentExercise.getExercise());
-
-
-        //fill next exercise
-        Exercise nextExerciseTemp = null;
-        if(whichPPL == "PULL") nextExerciseTemp = pullExercises[(currentExerciseNumber+1) % pullExercises.length];
-        else if(whichPPL == "PUSH") nextExerciseTemp = pushExercises[(currentExerciseNumber+1) % pushExercises.length];
-        else if(whichPPL == "LEGS") nextExerciseTemp = legsExercises[(currentExerciseNumber+1) % legsExercises.length];
         nextExercise = (TextView)findViewById(R.id.nextExercise);
 
-        if (nextExerciseTemp != null) nextExercise.setText(nextExerciseTemp.getExercise());
+        fetchInfo();
 
         /* Recent Exercise data */
         recentExercise = new Exercise[3];
-        recentExerciseTV = new TextView[3][3];
+        recentExerciseTV = new TextView[3][4];
 
         /* Fill with Dummy Data */
         System.arraycopy(dummyExercises, 1, recentExercise, 0, recentExercise.length);
@@ -147,9 +141,12 @@ public class StartScreen extends AppCompatActivity {
         recentExerciseTV[0][2] = (TextView)findViewById(R.id.entry_setrep1);
         recentExerciseTV[1][2] = (TextView)findViewById(R.id.entry_setrep2);
         recentExerciseTV[2][2] = (TextView)findViewById(R.id.entry_setrep3);
+        recentExerciseTV[0][3] = (TextView)findViewById(R.id.entry_time1);
+        recentExerciseTV[1][3] = (TextView)findViewById(R.id.entry_time2);
+        recentExerciseTV[2][3] = (TextView)findViewById(R.id.entry_time3);
 
-        updateButtonBar();
-        updateSetRepData();
+        onResume();
+        fetchHistory();
     }
 
     /* Switching with flags */
@@ -160,15 +157,21 @@ public class StartScreen extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         Bundle b = getIntent().getExtras();
         if(b.getString("ppl") != null) {
             whichPPL = b.getString("ppl");
-            updateButtonBar();
-            updateSetRepData();
         }
+        if(b.getSerializable("databus") != null) {
+            DataBus temp = (DataBus) b.getSerializable("databus");
+            mExercises = temp.getExercises();
+            mDates = temp.getDates();
+            mFavorites = temp.getFavorites();
+        }
+        updateButtonBar();
+        updateSetRepData();
     }
 
     public void onEditButtonClick(View v) {
@@ -183,51 +186,55 @@ public class StartScreen extends AppCompatActivity {
     }
 
     public void updateSetRepData() {
-        /* Get next exercise */
-        Exercise nextExerciseTemp = null;
-        if (whichPPL.equals("PULL")) {
-            currentExercise = pullExercises[currentExerciseNumber];
-             nextExerciseTemp = pullExercises[(currentExerciseNumber+1) % pullExercises.length];
-        }
-        else if (whichPPL.equals("PUSH")) {
-            currentExercise = pushExercises[currentExerciseNumber];
-            nextExerciseTemp = pushExercises[(currentExerciseNumber+1) % pullExercises.length];
-        }
-        else if (whichPPL.equals("LEGS")) {
-            currentExercise = legsExercises[currentExerciseNumber];
-            nextExerciseTemp = legsExercises[(currentExerciseNumber+1) % pullExercises.length];
-        }
-        /* Set names for current and next exercise */
+         /* set current exercise */
+        currentExercise = mExercises[currentExerciseNumber];
         exercise.setText(currentExercise.getExercise());
 
-        if (nextExerciseTemp != null) nextExercise.setText(nextExerciseTemp.getExercise());
+        /* set next exercise */
+        String nextExerciseTemp;
+        if(currentExerciseNumber+1 >= 6) {
+            nextExerciseTemp = "Finished!";
+        } else {
+            nextExerciseTemp = mExercises[currentExerciseNumber+1].getExercise();
+        }
+        nextExercise.setText(nextExerciseTemp);
+
 
         weightData.setText( String.format(US, "%d lbs", currentExercise.getWeight()) );
-        setData.setText( String.format(US, "%d / %d", setCurrent, currentExercise.getSets()) );
+        setData.setText( String.format(US, "%d / %d", currentSetNumber, currentExercise.getSets()) );
         repData.setText( String.format(US, "%d", currentExercise.getReps()) );
 
-        /* Populate Exercise TextViews */
-        for(int i=0; i<recentExerciseTV.length; i++) {
-            recentExerciseTV[i][0].setText(recentExercise[i].getExercise());
-            recentExerciseTV[i][1].setText( String.format(US, "%d lbs",
-                    recentExercise[i].getWeight()) );
-            recentExerciseTV[i][2].setText( String.format(US, "%dx%d",
-                    recentExercise[i].getSets(), recentExercise[i].getReps()) );
+        /* Populate History Exercise TextViews */
+        for(int i=0; i<mHistoryExercises.length; i++) {
+            if(mHistoryExercises[i] != null) {
+                recentExerciseTV[i][0].setText(mHistoryExercises[i].getExercise());
+                recentExerciseTV[i][1].setText(String.format(US, "%d lbs",
+                        mHistoryExercises[i].getWeight()));
+                recentExerciseTV[i][2].setText(String.format(US, "%dx%d",
+                        mHistoryExercises[i].getSets(), mHistoryExercises[i].getReps()));
+                recentExerciseTV[i][3].setText(mHistoryDates[i]);
+            }
+            else {
+                recentExerciseTV[i][0].setText("");
+                recentExerciseTV[i][1].setText("");
+                recentExerciseTV[i][2].setText("");
+                recentExerciseTV[i][3].setText("");
+            }
         }
     }
 
     /* Press Done Button */
     public void doneSetButtonPressed(View v) {
         /* Jump to next set */
-        setCurrent++;
-        if(setCurrent > currentExercise.getSets()) {
+        currentSetNumber++;
+        if(currentSetNumber > currentExercise.getSets()) {
             Toast.makeText(this, "Finished "+currentExercise.getExercise(), Toast.LENGTH_SHORT).show();
-            setCurrent = 1;
+            currentSetNumber = 1;
 
 
             /* Jump to next exercise */
             currentExerciseNumber++;
-            if(currentExerciseNumber >= pullExercises.length) {
+            if(currentExerciseNumber >= 6) {
                 Toast.makeText(this, "Finished workout!", Toast.LENGTH_LONG).show();
                 currentExerciseNumber = 0;
             }
@@ -283,6 +290,8 @@ public class StartScreen extends AppCompatActivity {
                 break;
         }
         updateButtonBar();
+        fetchInfo();
+        fetchHistory();
         updateSetRepData();
     }
     public void updateButtonBar() {
@@ -308,5 +317,32 @@ public class StartScreen extends AppCompatActivity {
                 mLegsButton.setTextColor(Color.parseColor("#165597"));
                 break;
         }
+    }
+
+    public void fetchInfo() {
+        ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
+        }
+
+        DataBus temp = handler.getExercises(whichPPL);
+        mExercises = temp.getExercises();
+        mDates = temp.getDates();
+        mFavorites = temp.getFavorites();
+    }
+
+    public void fetchHistory() {
+        ExerciseDBHandler handler = new ExerciseDBHandler(this);
+        try {
+            handler.createDatabase();
+        } catch (IOException io) {
+            throw new Error("Unable to create database");
+        }
+
+        DataBus temp = handler.getHistory(currentExercise.getExercise());
+        mHistoryExercises = temp.getExercises();
+        mHistoryDates = temp.getDates();
     }
 }
