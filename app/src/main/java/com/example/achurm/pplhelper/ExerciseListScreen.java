@@ -32,6 +32,8 @@ public class ExerciseListScreen extends AppCompatActivity {
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
     private static final int mEditFlag = Intent.FLAG_ACTIVITY_NO_HISTORY;
 
+    //TODO: Call the favorite button function from onCreate and onResume
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

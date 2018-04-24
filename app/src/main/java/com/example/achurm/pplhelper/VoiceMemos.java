@@ -30,6 +30,7 @@ public class VoiceMemos extends AppCompatActivity {
 
     private File[] mFiles = null;
     private int mFileIndex = 0;
+    private static int PERMISSION_REQUEST = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +49,13 @@ public class VoiceMemos extends AppCompatActivity {
         /* Add microphone and external storage write permissions */
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
-        || (ContextCompat.checkSelfPermission(getApplicationContext(),
+        && (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
             ActivityCompat.requestPermissions(VoiceMemos.this,
-                    new String[]{Manifest.permission.RECORD_AUDIO},
-            101);
-            ActivityCompat.requestPermissions(VoiceMemos.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    101);
+                    new String[]{Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST);
         }
 
         PackageManager manager = this.getPackageManager();
@@ -173,7 +172,7 @@ public class VoiceMemos extends AppCompatActivity {
     public void checkAudioFiles() {
         File folder = new File(Environment.getExternalStorageDirectory(), "memos");
         File[] files = folder.listFiles();
-        if(files != null) {
+        if(files != null) { //are there files in the folder?
             if (files.length == 1) {
                 mPrevButton.setEnabled(false);
                 mNextButton.setEnabled(false);
@@ -187,6 +186,12 @@ public class VoiceMemos extends AppCompatActivity {
             mPlayingName.setText("file:\t"+playAudioFilePath);
             mPlayButton.setEnabled(true);
         }
+        else { //if no files, disable buttons
+            mPrevButton.setEnabled(false);
+            mNextButton.setEnabled(false);
+            mPlayButton.setEnabled(false);
+        }
+
     }
 
     public void onPrevButtonClick(View v) {
@@ -200,7 +205,7 @@ public class VoiceMemos extends AppCompatActivity {
         else {
             mPrevButton.setEnabled(true);
             mPlayButton.setEnabled(true);
-            playAudioFilePath = mFiles[mFileIndex-1].getAbsolutePath();
+            playAudioFilePath = mFiles[--mFileIndex].getAbsolutePath();
             mPlayingName.setText("file:\t"+playAudioFilePath);
         }
     }
@@ -215,9 +220,8 @@ public class VoiceMemos extends AppCompatActivity {
         else {
             mNextButton.setEnabled(true);
             mPlayButton.setEnabled(true);
-            playAudioFilePath = mFiles[mFileIndex+1].getAbsolutePath();
+            playAudioFilePath = mFiles[++mFileIndex].getAbsolutePath();
             mPlayingName.setText("file:\t"+playAudioFilePath);
-
         }
     }
 

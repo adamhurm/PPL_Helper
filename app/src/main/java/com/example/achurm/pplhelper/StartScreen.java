@@ -16,6 +16,8 @@ import java.io.IOException;
 
 import static java.util.Locale.US;
 
+//TODO: Save currentExerciseNumber and currentSetNumber for keeping track of exercise onResume
+
 public class StartScreen extends AppCompatActivity {
     /* Exercise Data */
     private Exercise currentExercise;
@@ -47,6 +49,9 @@ public class StartScreen extends AppCompatActivity {
 
     private Exercise mHistoryExercises[] = new Exercise[3];
     private String mHistoryDates[] = new String[3];
+
+
+    //TODO: Keep track of current exercise, save for next time you come back from splash screen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

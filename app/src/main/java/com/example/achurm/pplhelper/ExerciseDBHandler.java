@@ -201,7 +201,6 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
                 String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
                         TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight,
                         COLUMN_SETS, sets, COLUMN_REPS, reps);
-        //String.format("SELECT * FROM %s WHERE %s = \"%s\"", TABLE_EXERCISES, COLUMN_NAMES, exerciseName);
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -309,8 +308,8 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
     public DataBus getHistory(String exerciseName){
         String sqlQuery =
-                String.format("SELECT * FROM %s WHERE %s=\'%s\' LIMIT 3",
-                        TABLE_EXERCISE, COLUMN_NAME, exerciseName);
+                String.format("SELECT * FROM %s WHERE %s=\'%s\' ORDER BY %s DESC LIMIT 3",
+                        TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_TIME);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
