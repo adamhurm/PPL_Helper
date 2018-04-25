@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Recording name:"
+        android:text="@string/recording_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onRecordButtonClick"
-            android:text="record"
+            android:text="@string/record"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.21"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onStopRecordButtonClick"
-            android:text="stop record"
+            android:text="@string/stop_record"
             tools:layout_editor_absoluteX="236dp"
             tools:layout_editor_absoluteY="201dp" />
     </LinearLayout>
@@ -72,7 +72,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onPlayButtonClick"
-            android:text="play"
+            android:text="@string/play"
             tools:layout_editor_absoluteX="68dp"
             tools:layout_editor_absoluteY="416dp" />
 
@@ -83,7 +83,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onStopPlayButtonClick"
-            android:text="stop play"
+            android:text="@string/stop_play"
             tools:layout_editor_absoluteX="244dp"
             tools:layout_editor_absoluteY="416dp" />
 
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="17dp"
         android:gravity="center_horizontal"
-        android:text="Playing name:"
+        android:text="@string/playing_name"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -118,7 +118,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onPrevButtonClick"
-            android:text="Previous"
+            android:text="@string/previous"
             tools:layout_editor_absoluteX="68dp"
             tools:layout_editor_absoluteY="416dp" />
 
@@ -129,7 +129,7 @@
             android:layout_weight="1"
             android:enabled="false"
             android:onClick="onNextButtonClick"
-            android:text="Next"
+            android:text="@string/next"
             tools:layout_editor_absoluteX="244dp"
             tools:layout_editor_absoluteY="416dp" />
 
@@ -142,7 +142,7 @@
         android:layout_marginTop="17dp"
         android:gravity="center_vertical|center_horizontal"
         android:onClick="listAudioFiles"
-        android:text="List All Files"
+        android:text="@string/list_all_files"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />

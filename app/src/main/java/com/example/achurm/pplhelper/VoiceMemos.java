@@ -18,19 +18,26 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class VoiceMemos extends AppCompatActivity {
+    /* Pointers to buttons and TVs */
     private Button mRecordButton, mStopRecordButton, mPlayButton, mStopPlayButton;
     private Button mPrevButton, mNextButton;
     private TextView mRecordingName, mPlayingName;
+
+    /* Storage information */
     private String recordAudioFilePath;
     private String playAudioFilePath;
+    private File[] mFiles = null;
+    private int mFileIndex = 0;
+
+    /* Pointer to MediaPlayer and MediaRecorder */
     private MediaRecorder myRecorder;
     private MediaPlayer myPlayer;
 
-    private File[] mFiles = null;
-    private int mFileIndex = 0;
     private static int PERMISSION_REQUEST = 101;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +65,8 @@ public class VoiceMemos extends AppCompatActivity {
                     PERMISSION_REQUEST);
         }
 
+        /* Check that microphone is usable */
         PackageManager manager = this.getPackageManager();
-
         if(manager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE))
             mRecordButton.setEnabled(true);
         else
@@ -67,7 +74,7 @@ public class VoiceMemos extends AppCompatActivity {
 
         checkAudioFiles();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         String date = sdf.format(new Date());
 
 
@@ -86,6 +93,7 @@ public class VoiceMemos extends AppCompatActivity {
 
     }
 
+    /** Record Start/Stop Button Presses **/
     public void onRecordButtonClick(View v) throws IOException {
 
         try {
@@ -96,7 +104,7 @@ public class VoiceMemos extends AppCompatActivity {
         }
 
         //update with new name
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         String date = sdf.format(new Date());
 
         File f = new File(Environment.getExternalStorageDirectory(), "memos");
@@ -123,7 +131,6 @@ public class VoiceMemos extends AppCompatActivity {
 
         mRecordButton.setEnabled(false);
         mStopRecordButton.setEnabled(true);
-
     }
     public void onStopRecordButtonClick(View v){
         myRecorder.stop();
@@ -138,6 +145,8 @@ public class VoiceMemos extends AppCompatActivity {
         checkAudioFiles();
         mPlayButton.setEnabled(true);
     }
+
+    /** Play Start/Stop Button Presses **/
     public void onPlayButtonClick(View v){
         myPlayer = new MediaPlayer();
         try {
@@ -169,31 +178,7 @@ public class VoiceMemos extends AppCompatActivity {
         checkAudioFiles();
     }
 
-    public void checkAudioFiles() {
-        File folder = new File(Environment.getExternalStorageDirectory(), "memos");
-        File[] files = folder.listFiles();
-        if(files != null) { //are there files in the folder?
-            if (files.length == 1) {
-                mPrevButton.setEnabled(false);
-                mNextButton.setEnabled(false);
-            }
-            else {
-                mPrevButton.setEnabled(true);
-                mNextButton.setEnabled(true);
-            }
-            mFiles = files;
-            playAudioFilePath = mFiles[mFileIndex].getAbsolutePath();
-            mPlayingName.setText("file:\t"+playAudioFilePath);
-            mPlayButton.setEnabled(true);
-        }
-        else { //if no files, disable buttons
-            mPrevButton.setEnabled(false);
-            mNextButton.setEnabled(false);
-            mPlayButton.setEnabled(false);
-        }
-
-    }
-
+    /** Previous and Next Button Presses */
     public void onPrevButtonClick(View v) {
         checkAudioFiles();
         if(mFiles == null)
@@ -225,6 +210,32 @@ public class VoiceMemos extends AppCompatActivity {
         }
     }
 
+    /** Audio file functions **/
+    /* Check for available audio files in the folder and handle buttons/path appropriately */
+    public void checkAudioFiles() {
+        File folder = new File(Environment.getExternalStorageDirectory(), "memos");
+        File[] files = folder.listFiles();
+        if(files != null) { //are there files in the folder?
+            if (files.length == 1) {
+                mPrevButton.setEnabled(false);
+                mNextButton.setEnabled(false);
+            }
+            else {
+                mPrevButton.setEnabled(true);
+                mNextButton.setEnabled(true);
+            }
+            mFiles = files;
+            playAudioFilePath = mFiles[mFileIndex].getAbsolutePath();
+            mPlayingName.setText("file:\t"+playAudioFilePath);
+            mPlayButton.setEnabled(true);
+        }
+        else { //if no files, disable buttons
+            mPrevButton.setEnabled(false);
+            mNextButton.setEnabled(false);
+            mPlayButton.setEnabled(false);
+        }
+    }
+    /* List available audio files in the folder */
     public void listAudioFiles(View v) {
         String temp = "";
         if(mFiles == null) temp = "No files found.";

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import com.example.achurm.pplhelper.Exercise;
 
@@ -21,10 +22,15 @@ import com.example.achurm.pplhelper.Exercise;
  */
 
 public class ExerciseDBHandler extends SQLiteOpenHelper {
-
+    /* Database name and version */
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "exerciseDB.db";
 
+    /* Database location information */
+    private String DB_PATH;
+    private Context mContext;
+
+    /* Database table and column names */
     private static final String TABLE_EXERCISE = "Exercises";
     private static final String COLUMN_ID = "ExerciseID";
     private static final String COLUMN_NAME = "ExerciseName";
@@ -35,8 +41,6 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_FAVORITE = "Favorite";
     private static final String COLUMN_TYPE = "Type";
 
-    private Context mContext;
-    private String DB_PATH;
 
     public ExerciseDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -119,7 +123,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         int count = cursor.getCount();
 
         //get time
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         String date = sdf.format(new Date());
 
         values.put(COLUMN_ID, count);
@@ -133,6 +137,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_EXERCISE, null, values);
 
+        cursor.close();
         db.close();
     }
 
@@ -167,7 +172,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     /* find exercise using name, weight, sets, reps */
     public Exercise findExercise(String exerciseName, int weight, int sets, int reps) {
         String sqlQuery =
-                String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                String.format(Locale.US, "SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
                         TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight,
                         COLUMN_SETS, sets, COLUMN_REPS, reps);
 
@@ -198,7 +203,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
         boolean result = false;
 
         String sqlQuery =
-                String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                String.format(Locale.US, "SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
                         TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight,
                         COLUMN_SETS, sets, COLUMN_REPS, reps);
 
@@ -225,7 +230,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     }
     public boolean testFavorite(String exerciseName, int sets, int reps, int weight) {
         String sqlQuery =
-                String.format("SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                String.format(Locale.US, "SELECT * FROM %s WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
                         TABLE_EXERCISE, COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight,
                         COLUMN_SETS, sets, COLUMN_REPS, reps);
 
@@ -246,11 +251,11 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
     }
     /* Update favorite and timestamp */
     public void updateExercise(String exerciseName, int sets, int reps, int weight, boolean favorite) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         String date = sdf.format(new Date());
 
         String sqlQuery =
-                String.format("UPDATE %s SET %s=%d, %s=\'%s\' WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
+                String.format(Locale.US,"UPDATE %s SET %s=%d, %s=\'%s\' WHERE %s=\'%s\' AND %s=%d AND %s=%d AND %s=%d",
                         TABLE_EXERCISE, COLUMN_FAVORITE, (favorite? 1 : 0), COLUMN_TIME, date,
                         COLUMN_NAME, exerciseName, COLUMN_WEIGHT, weight, COLUMN_SETS, sets, COLUMN_REPS, reps);
 
@@ -264,7 +269,7 @@ public class ExerciseDBHandler extends SQLiteOpenHelper {
 
     public DataBus getExercises(String whichPPL) {
         String sqlQuery =
-                String.format("SELECT * FROM %s WHERE %s=\'%s\' LIMIT 6",
+                String.format(Locale.US, "SELECT * FROM %s WHERE %s=\'%s\' LIMIT 6",
                         TABLE_EXERCISE, COLUMN_TYPE, whichPPL);
 
         SQLiteDatabase db = this.getWritableDatabase();

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Created by achurm on 3/8/18.
@@ -65,9 +66,12 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
                 Toast.makeText(this, "Exercise is null", Toast.LENGTH_SHORT).show();
             else {
                 mExerciseNameView.setText(mExercise.getExercise());
-                mSetsView.setText(Integer.toString(mExercise.getSets()));
-                mRepsView.setText(Integer.toString(mExercise.getReps()));
-                mWeightView.setText(Integer.toString(mExercise.getWeight()));
+                mSetsView.setText(
+                        String.format(Locale.US, "%d", mExercise.getSets()));
+                mRepsView.setText(
+                        String.format(Locale.US, "%d", mExercise.getReps()));
+                mWeightView.setText(
+                        String.format(Locale.US, "%d", mExercise.getWeight()));
             }
         }
     }
@@ -177,9 +181,12 @@ public class ExerciseCustomizeScreen extends AppCompatActivity {
             int weight = exercise.getWeight();
 
             mExerciseNameView.setText(exerciseName);
-            mSetsView.setText(Integer.toString(sets));
-            mRepsView.setText(Integer.toString(reps));
-            mWeightView.setText(Integer.toString(weight));
+            mSetsView.setText(
+                    String.format(Locale.US, "%d", mExercise.getSets()));
+            mRepsView.setText(
+                    String.format(Locale.US, "%d", mExercise.getReps()));
+            mWeightView.setText(
+                    String.format(Locale.US, "%d", mExercise.getWeight()));
         } else {
             Toast.makeText(this, "Exercise not found", Toast.LENGTH_SHORT).show();
             //mExerciseNameView.setText("Exercise not found");

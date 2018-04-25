@@ -32,4 +32,22 @@
     <string name="up_next">UP NEXT</string>
     <string name="weight">Weight</string>
     <string name="welcome_message">Welcome to the Push, Pull, Legs workout routine!\n If you\'re already familiar, this app should enable you to improve your progress and tracking. If you aren\'t, we\'ll set up a workout for you that you can alter to fit your needs.</string>
+    <string name="push">Push</string>
+    <string name="pull">Pull</string>
+    <string name="legs">Legs</string>
+    <string name="stopwatch">Stopwatch:</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="reset">Reset</string>
+    <string name="time">time</string>
+    <string name="voice_memos">Voice Memos</string>
+    <string name="recording_name">Recording name:</string>
+    <string name="record">record</string>
+    <string name="stop_record">stop record</string>
+    <string name="play">play</string>
+    <string name="stop_play">stop play</string>
+    <string name="playing_name">Playing name:</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="list_all_files">List All Files</string>
 </resources>

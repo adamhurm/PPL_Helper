@@ -25,7 +25,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorSecondary"
                 android:onClick="pplButtonClick"
-                android:text="Push"
+                android:text="@string/push"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
@@ -37,7 +37,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorSecondary"
                 android:onClick="pplButtonClick"
-                android:text="Pull"
+                android:text="@string/pull"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
 
@@ -49,7 +49,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorSecondary"
                 android:onClick="pplButtonClick"
-                android:text="Legs"
+                android:text="@string/legs"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
         </LinearLayout>

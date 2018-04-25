@@ -25,7 +25,7 @@
             android:layout_weight="1"
             android:background="@color/colorSecondary"
             android:onClick="pplButton"
-            android:text="Push"
+            android:text="@string/push"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp" />
 
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:background="@color/colorSecondary"
             android:onClick="pplButton"
-            android:text="Pull"
+            android:text="@string/pull"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp" />
 
@@ -49,7 +49,7 @@
             android:layout_weight="1"
             android:background="@color/colorSecondary"
             android:onClick="pplButton"
-            android:text="Legs"
+            android:text="@string/legs"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp" />
     </LinearLayout>
@@ -204,7 +204,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:text="Stopwatch:"
+                    android:text="@string/stopwatch"
                     android:textAlignment="viewStart" />
 
                 <Chronometer
@@ -220,7 +220,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onStartWatchClicked"
-                    android:text="Start" />
+                    android:text="@string/start" />
 
                 <Button
                     android:id="@+id/stopWatchButton"
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onStopWatchClicked"
-                    android:text="Stop" />
+                    android:text="@string/stop" />
 
                 <Button
                     android:id="@+id/resetWatchButton"
@@ -236,7 +236,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onResetWatchClicked"
-                    android:text="Reset" />
+                    android:text="@string/reset" />
 
             </LinearLayout>
 
@@ -305,7 +305,7 @@
                     android:layout_columnWeight="1"
                     android:layout_row="1"
                     android:layout_rowWeight="0"
-                    android:text="time"
+                    android:text="@string/time"
                     android:textAlignment="center"
                     android:textSize="16sp" />
 
@@ -353,7 +353,7 @@
                     android:layout_columnWeight="1"
                     android:layout_row="2"
                     android:layout_rowWeight="0"
-                    android:text="time"
+                    android:text="@string/time"
                     android:textAlignment="center"
                     android:textSize="16sp" />
 
@@ -401,7 +401,7 @@
                     android:layout_columnWeight="1"
                     android:layout_row="3"
                     android:layout_rowWeight="0"
-                    android:text="time"
+                    android:text="@string/time"
                     android:textAlignment="center"
                     android:textSize="16sp" />
 
@@ -464,7 +464,7 @@
         android:layout_marginBottom="18dp"
         android:layout_marginEnd="16dp"
         android:onClick="onVoiceMemoClick"
-        android:text="Voice Memos"
+        android:text="@string/voice_memos"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

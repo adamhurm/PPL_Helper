@@ -8,38 +8,39 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ExerciseListScreen extends AppCompatActivity {
-
+    /* Exercise TVs */
     private ArrayList<TextView> exerciseTVs;
 
+    /* Exercise Data */
+    private String whichPPL = "PUSH";
+    private int mNumber;
     private Exercise mExercise;
     private Exercise mExercises[] = new Exercise[6];
     private CheckBox mFavs[] = new CheckBox[6];
     private int mFavorites[] = new int[6];
 
-    private int mNumber;
-
+    /* Exercise Buttons */
     private Button mPushButton, mPullButton, mLegsButton;
-    private String whichPPL = "PUSH";
 
     /* Intent flags */
     private static final boolean USE_FLAG = true;
     private static final int mSaveFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
     private static final int mEditFlag = Intent.FLAG_ACTIVITY_NO_HISTORY;
 
-    //TODO: Call the favorite button function from onCreate and onResume
 
+    /** Override default activity management functions **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_list_screen);
 
-        exerciseTVs = new ArrayList<TextView>();
+        exerciseTVs = new ArrayList<>();
         exerciseTVs.add((TextView)findViewById(R.id.nameEx1));
         exerciseTVs.add((TextView)findViewById(R.id.nameEx2));
         exerciseTVs.add((TextView)findViewById(R.id.nameEx3));
@@ -49,9 +50,9 @@ public class ExerciseListScreen extends AppCompatActivity {
 
 
         /* Button bar pointers */
-        mPushButton = (Button) findViewById(R.id.pushButton);
-        mPullButton = (Button) findViewById(R.id.pullButton);
-        mLegsButton = (Button) findViewById(R.id.legsButton);
+        mPushButton = findViewById(R.id.pushButton);
+        mPullButton = findViewById(R.id.pullButton);
+        mLegsButton = findViewById(R.id.legsButton);
 
         mFavs[0] = findViewById(R.id.favEx1);
         mFavs[1] = findViewById(R.id.favEx2);
@@ -63,21 +64,22 @@ public class ExerciseListScreen extends AppCompatActivity {
 
         unBundle(getIntent());
         updateButtonBar();
-        fillTextViews();
+        fetchInfo();
+        updateScreenData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         unBundle(this.getIntent());
         updateButtonBar();
-        fillTextViews();
+        fetchInfo();
+        updateScreenData();
     }
 
     public void unBundle(Intent intent) {
-
         Bundle b = intent.getExtras();
-
         if(b != null) {
 
             if (b.getString("ppl") != null) {
@@ -100,7 +102,8 @@ public class ExerciseListScreen extends AppCompatActivity {
                 mExercise = b.getParcelable("exercise");
                 mNumber = b.getInt("number");
                 /* Refresh updated textViews */
-                exerciseTVs.get(mNumber - 1).setText(String.format("%s\n%dx%d\t\t\t\t%d",
+                exerciseTVs.get(mNumber - 1).setText(String.format(Locale.US,
+                        "%s\n%dx%d\t\t\t\t%d",
                         mExercise.getExercise(), mExercise.getSets(), mExercise.getReps(),
                         mExercise.getWeight()));
             }
@@ -115,6 +118,7 @@ public class ExerciseListScreen extends AppCompatActivity {
         setIntent(intent);
     }
 
+    /** New Activity Button Functions **/
     /* Switch to startScreen */
     public void onSaveButtonClick(View v) {
         Intent mIntent = new Intent(this, StartScreen.class);
@@ -135,7 +139,7 @@ public class ExerciseListScreen extends AppCompatActivity {
         startActivity(mIntent);
     }
 
-    /* Switch to customExerciseScreen */
+    /* Switch to ExerciseCustomizeScreen */
     public void onEditButtonClick(View v) {
         Intent mIntent = new Intent(this, ExerciseCustomizeScreen.class);
 
@@ -178,14 +182,16 @@ public class ExerciseListScreen extends AppCompatActivity {
         startActivity(mIntent);
     }
 
-    public void fillTextViews() {
+    /** Update the GUI **/
+    public void updateScreenData() {
         /* Fill TextViews */
         for(int i=0; i<6; i++){
 
             Exercise temp = mExercises[i];
 
             if(temp != null)
-                exerciseTVs.get(i).setText(String.format("%s\n%dx%d\t\t\t\t%d",
+                exerciseTVs.get(i).setText(String.format(Locale.US,
+                        "%s\n%dx%d\t\t\t\t%d",
                     temp.getExercise(), temp.getSets(), temp.getReps(), temp.getWeight()));
         }
         for(int i=0; i<6; i++) {
@@ -194,6 +200,7 @@ public class ExerciseListScreen extends AppCompatActivity {
         }
     }
 
+    /** Handle favorite button presses **/
     public void onFavoriteButtonClick(View v) {
         int favIndex = 0;
         switch(v.getId()) {
@@ -218,19 +225,24 @@ public class ExerciseListScreen extends AppCompatActivity {
         }
 
         boolean isFavorite = !(mFavorites[favIndex] == 1); //reverse current favorite
+
         ExerciseDBHandler handler = new ExerciseDBHandler(this);
         try {
             handler.createDatabase();
         } catch (IOException io) {
             throw new Error("Unable to create database");
         }
+
         Exercise temp = mExercises[favIndex];
         handler.updateExercise(temp.getExercise(), temp.getSets(), temp.getReps(), temp.getWeight(), isFavorite);
-        fetchHistory();
-        fillTextViews();
+        mFavorites[favIndex] = mFavorites[(favIndex+1)%2];
+
+        fetchInfo();
+        updateScreenData();
     }
 
-    /* Button bar functions */
+    /** Button bar functions **/
+    /* Change whichPPL and reset the Exercise/Set counters */
     public void pplButtonClick(View v) {
         switch(v.getId()) {
             case R.id.pushButton:
@@ -243,9 +255,9 @@ public class ExerciseListScreen extends AppCompatActivity {
                 whichPPL = "LEGS";
                 break;
         }
-        updateButtonBar();
-        fetchHistory();
-        fillTextViews();
+        updateButtonBar();  //color change
+        fetchInfo();        //grab exercises, favorites
+        updateScreenData();    //update the gui
     }
     public void updateButtonBar() {
         switch(whichPPL) {
@@ -271,7 +283,10 @@ public class ExerciseListScreen extends AppCompatActivity {
                 break;
         }
     }
-    public void fetchHistory() {
+
+    /** Fetch information from database **/
+    /* Fetch exercises, favorites */
+    public void fetchInfo() {
         ExerciseDBHandler handler = new ExerciseDBHandler(this);
         try {
             handler.createDatabase();

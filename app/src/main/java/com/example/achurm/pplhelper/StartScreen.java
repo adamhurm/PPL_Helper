@@ -1,9 +1,10 @@
 package com.example.achurm.pplhelper;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.SystemClock;
-import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,14 +17,33 @@ import java.io.IOException;
 
 import static java.util.Locale.US;
 
-//TODO: Save currentExerciseNumber and currentSetNumber for keeping track of exercise onResume
+/** Lab 6 **/
+//DONE? - Db values being overridden (30)
+/* TODO: Ask AI if I can reset Set/Exercise Counters when changing between PPL
+   Save counters when switching between PUSH/PULL/LEGS ?
+   Two Options:
+   1. We have partially completed workouts; need to add reset button to easily restart workout
+   2. Don't save counters, but user loses progress if they misclick on PUSH/PULL/LEGS
+ */
+//TODO - Lab 6 document (20)
+//TODO - Pixel 2 test (20)
+//DONE - Fav button fix onResume (30)
 
 public class StartScreen extends AppCompatActivity {
-    /* Exercise Data */
+    /* Current Exercise Data */
     private Exercise currentExercise;
     private String whichPPL = "PUSH";
     private int currentExerciseNumber = 0;
     private int currentSetNumber = 1;
+
+    /* Exercise, Dates, and Favorites Data */
+    private Exercise mExercises[] = new Exercise[6];
+    private String mDates[] = new String[6];
+    private int mFavorites[] = new int[6];
+
+    /* Historical Exercises and Dates data */
+    private Exercise mHistoryExercises[] = new Exercise[3];
+    private String mHistoryDates[] = new String[3];
 
     /* Exercise TVs */
     private TextView exercise;
@@ -35,7 +55,6 @@ public class StartScreen extends AppCompatActivity {
     private Chronometer mChronometer;
     private long trackingTime = 0;
 
-
     /* Button bar */
     private Button mPullButton, mPushButton, mLegsButton;
 
@@ -43,72 +62,63 @@ public class StartScreen extends AppCompatActivity {
     private static final boolean USE_FLAG = true;
     private static final int mFlag = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
-    private Exercise mExercises[] = new Exercise[6];
-    private String mDates[] = new String[6];
-    private int mFavorites[] = new int[6];
 
-    private Exercise mHistoryExercises[] = new Exercise[3];
-    private String mHistoryDates[] = new String[3];
-
-
-    //TODO: Keep track of current exercise, save for next time you come back from splash screen
-
+    /** Override default activity management functions **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
         /* Weight, Set, Rep data */
-        weightData = (TextView)findViewById(R.id.weightData);
-        setData = (TextView)findViewById(R.id.setData);
-        repData = (TextView)findViewById(R.id.repData);
+        weightData = findViewById(R.id.weightData);
+        setData = findViewById(R.id.setData);
+        repData = findViewById(R.id.repData);
 
         /* Timer pointers */
-        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        mChronometer = findViewById(R.id.chronometer);
         mChronometer.setBase(SystemClock.elapsedRealtime());
 
 
         /* Button bar pointers */
-        mPushButton = (Button) findViewById(R.id.pushButton);
-        mPullButton = (Button) findViewById(R.id.pullButton);
-        mLegsButton = (Button) findViewById(R.id.legsButton);
+        mPushButton = findViewById(R.id.pushButton);
+        mPullButton = findViewById(R.id.pullButton);
+        mLegsButton = findViewById(R.id.legsButton);
 
-        exercise = (TextView)findViewById(R.id.exercise);
-        nextExercise = (TextView)findViewById(R.id.nextExercise);
+        exercise = findViewById(R.id.exercise);
+        nextExercise = findViewById(R.id.nextExercise);
 
         fetchInfo();
 
         recentExerciseTV = new TextView[3][4];
 
         /* TextViews: 0 "Exercise", 1 "Weight", 2 "Set"x"Rep", 3 "Date" */
-        recentExerciseTV[0][0] = (TextView)findViewById(R.id.entry_exercise1);
-        recentExerciseTV[1][0] = (TextView)findViewById(R.id.entry_exercise2);
-        recentExerciseTV[2][0] = (TextView)findViewById(R.id.entry_exercise3);
-        recentExerciseTV[0][1] = (TextView)findViewById(R.id.entry_weight1);
-        recentExerciseTV[1][1] = (TextView)findViewById(R.id.entry_weight2);
-        recentExerciseTV[2][1] = (TextView)findViewById(R.id.entry_weight3);
-        recentExerciseTV[0][2] = (TextView)findViewById(R.id.entry_setrep1);
-        recentExerciseTV[1][2] = (TextView)findViewById(R.id.entry_setrep2);
-        recentExerciseTV[2][2] = (TextView)findViewById(R.id.entry_setrep3);
-        recentExerciseTV[0][3] = (TextView)findViewById(R.id.entry_time1);
-        recentExerciseTV[1][3] = (TextView)findViewById(R.id.entry_time2);
-        recentExerciseTV[2][3] = (TextView)findViewById(R.id.entry_time3);
+        recentExerciseTV[0][0] = findViewById(R.id.entry_exercise1);
+        recentExerciseTV[1][0] = findViewById(R.id.entry_exercise2);
+        recentExerciseTV[2][0] = findViewById(R.id.entry_exercise3);
+        recentExerciseTV[0][1] = findViewById(R.id.entry_weight1);
+        recentExerciseTV[1][1] = findViewById(R.id.entry_weight2);
+        recentExerciseTV[2][1] = findViewById(R.id.entry_weight3);
+        recentExerciseTV[0][2] = findViewById(R.id.entry_setrep1);
+        recentExerciseTV[1][2] = findViewById(R.id.entry_setrep2);
+        recentExerciseTV[2][2] = findViewById(R.id.entry_setrep3);
+        recentExerciseTV[0][3] = findViewById(R.id.entry_time1);
+        recentExerciseTV[1][3] = findViewById(R.id.entry_time2);
+        recentExerciseTV[2][3] = findViewById(R.id.entry_time3);
 
         onResume();
         fetchHistory();
-    }
-
-    /* Switching with flags */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        /* Retrieve current exercise and set through SharedPreferences */
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        currentExerciseNumber = sharedPref.getInt("currentExerciseNumber", 0);
+        currentSetNumber = sharedPref.getInt("currentSetNumber", 1);
+
+        /* Unbundle whichPPL, exercises, favorites, and dates */
         Bundle b = getIntent().getExtras();
         if(b.getString("ppl") != null) {
             whichPPL = b.getString("ppl");
@@ -130,9 +140,72 @@ public class StartScreen extends AppCompatActivity {
             mFavorites = temp.getFavorites();*/
         }
         updateButtonBar();
-        updateSetRepData();
+        updateScreenData();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        /* Save current exercise and set to SharedPreferences */
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("currentExerciseNumber", currentExerciseNumber);
+        editor.putInt("currentSetNumber", currentSetNumber);
+        editor.apply(); //asynchronous to avoid UI stuttering
+    }
+
+    /* Switching with flags */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    /** Update the GUI **/
+    public void updateScreenData() {
+         /* set current exercise */
+        currentExercise = mExercises[currentExerciseNumber];
+        exercise.setText(currentExercise.getExercise());
+
+        /* set next exercise */
+        String nextExerciseTemp;
+        if(currentExerciseNumber+1 >= 6) {
+            nextExerciseTemp = "Finished!";
+        } else {
+            nextExerciseTemp = mExercises[currentExerciseNumber+1].getExercise();
+        }
+        nextExercise.setText(nextExerciseTemp);
+
+
+        weightData.setText( String.format(US, "%d lbs", currentExercise.getWeight()) );
+        setData.setText( String.format(US, "%d / %d", currentSetNumber, currentExercise.getSets()) );
+        repData.setText( String.format(US, "%d", currentExercise.getReps()) );
+
+        /* Populate History Exercise TextViews */
+        for(int i=0; i<mHistoryExercises.length; i++) {
+
+            if(mHistoryExercises[i] != null) {
+                //fill if an exercise exists
+                recentExerciseTV[i][0].setText(mHistoryExercises[i].getExercise());
+                recentExerciseTV[i][1].setText(String.format(US, "%d lbs",
+                        mHistoryExercises[i].getWeight()));
+                recentExerciseTV[i][2].setText(String.format(US, "%dx%d",
+                        mHistoryExercises[i].getSets(), mHistoryExercises[i].getReps()));
+                recentExerciseTV[i][3].setText(mHistoryDates[i]);
+            }
+            else {
+                //handle empty exercises
+                recentExerciseTV[i][0].setText("");
+                recentExerciseTV[i][1].setText("");
+                recentExerciseTV[i][2].setText("");
+                recentExerciseTV[i][3].setText("");
+            }
+        }
+    }
+
+    /** New Activity Button Functions **/
+    /* Switch to ExerciseListScreen */
     public void onEditButtonClick(View v) {
         Intent mIntent = new Intent(this, ExerciseListScreen.class);
 
@@ -164,45 +237,7 @@ public class StartScreen extends AppCompatActivity {
         startActivity(mIntent);
     }
 
-    public void updateSetRepData() {
-         /* set current exercise */
-        currentExercise = mExercises[currentExerciseNumber];
-        exercise.setText(currentExercise.getExercise());
-
-        /* set next exercise */
-        String nextExerciseTemp;
-        if(currentExerciseNumber+1 >= 6) {
-            nextExerciseTemp = "Finished!";
-        } else {
-            nextExerciseTemp = mExercises[currentExerciseNumber+1].getExercise();
-        }
-        nextExercise.setText(nextExerciseTemp);
-
-
-        weightData.setText( String.format(US, "%d lbs", currentExercise.getWeight()) );
-        setData.setText( String.format(US, "%d / %d", currentSetNumber, currentExercise.getSets()) );
-        repData.setText( String.format(US, "%d", currentExercise.getReps()) );
-
-        /* Populate History Exercise TextViews */
-        for(int i=0; i<mHistoryExercises.length; i++) {
-            if(mHistoryExercises[i] != null) {
-                recentExerciseTV[i][0].setText(mHistoryExercises[i].getExercise());
-                recentExerciseTV[i][1].setText(String.format(US, "%d lbs",
-                        mHistoryExercises[i].getWeight()));
-                recentExerciseTV[i][2].setText(String.format(US, "%dx%d",
-                        mHistoryExercises[i].getSets(), mHistoryExercises[i].getReps()));
-                recentExerciseTV[i][3].setText(mHistoryDates[i]);
-            }
-            else {
-                recentExerciseTV[i][0].setText("");
-                recentExerciseTV[i][1].setText("");
-                recentExerciseTV[i][2].setText("");
-                recentExerciseTV[i][3].setText("");
-            }
-        }
-    }
-
-    /* Press Done Button */
+    /** Handle when sets are completed **/
     public void doneSetButtonPressed(View v) {
         /* Jump to next set */
         currentSetNumber++;
@@ -219,11 +254,10 @@ public class StartScreen extends AppCompatActivity {
             }
 
         }
-        updateSetRepData();
+        updateScreenData();
     }
 
-
-    /* Stopwatch (Chronometer) functions */
+    /** Stopwatch (Chronometer) button functions **/
     public void onStartWatchClicked(View v) {
         if(trackingTime == 0) {
             //starting for first time
@@ -244,7 +278,7 @@ public class StartScreen extends AppCompatActivity {
         mChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
-    /* Voice memo functions */
+    /** Voice memo button functions **/
     public void onVoiceMemoClick(View v) {
         Intent mIntent = new Intent(this, VoiceMemos.class);
 
@@ -255,24 +289,34 @@ public class StartScreen extends AppCompatActivity {
     }
 
 
-    /* Button bar functions */
+    /** Button bar functions **/
+    /* Change whichPPL and reset the Exercise/Set counters */
     public void pplButton(View v) {
         switch(v.getId()) {
             case R.id.pushButton:
                 whichPPL = "PUSH";
+                currentExerciseNumber = 0;
+                currentSetNumber = 1;
                 break;
             case R.id.pullButton:
                 whichPPL = "PULL";
+                currentExerciseNumber = 0;
+                currentSetNumber = 1;
                 break;
             case R.id.legsButton:
                 whichPPL = "LEGS";
+                currentExerciseNumber = 0;
+                currentSetNumber = 1;
                 break;
         }
-        updateButtonBar();
-        fetchInfo();
-        fetchHistory();
-        updateSetRepData();
+
+        updateButtonBar();  //color change
+        fetchInfo();        //grab exercises, dates, favorites
+        fetchHistory();     //grab history
+        updateScreenData(); //update the gui
     }
+
+    /* Handle the bar color change based on whichPPL */
     public void updateButtonBar() {
         switch(whichPPL) {
             case "PUSH":
@@ -298,6 +342,8 @@ public class StartScreen extends AppCompatActivity {
         }
     }
 
+    /** Fetch information from database **/
+    /* Fetch exercises, dates, favorites */
     public void fetchInfo() {
         ExerciseDBHandler handler = new ExerciseDBHandler(this);
         try {
@@ -312,6 +358,7 @@ public class StartScreen extends AppCompatActivity {
         mFavorites = temp.getFavorites();
     }
 
+    /* Fetch history exercises */
     public void fetchHistory() {
         ExerciseDBHandler handler = new ExerciseDBHandler(this);
         try {
