@@ -44,7 +44,7 @@ public class SplashScreen extends AppCompatActivity {
                 b.putString("ppl", "LEGS");
                 break;
             default:
-                b.putString("ppl", "PUSH");
+                b.putString("ppl", "START");
                 break;
         }
         mIntent.putExtras(b);

@@ -18,13 +18,7 @@ import java.io.IOException;
 import static java.util.Locale.US;
 
 /** Lab 6 **/
-//DONE? - Db values being overridden (30)
-/* TODO: Ask AI if I can reset Set/Exercise Counters when changing between PPL
-   Save counters when switching between PUSH/PULL/LEGS ?
-   Two Options:
-   1. We have partially completed workouts; need to add reset button to easily restart workout
-   2. Don't save counters, but user loses progress if they misclick on PUSH/PULL/LEGS
- */
+//DONE - Db values being overridden (30)
 //TODO - Lab 6 document (20)
 //TODO - Pixel 2 test (20)
 //DONE - Fav button fix onResume (30)
@@ -117,27 +111,35 @@ public class StartScreen extends AppCompatActivity {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         currentExerciseNumber = sharedPref.getInt("currentExerciseNumber", 0);
         currentSetNumber = sharedPref.getInt("currentSetNumber", 1);
+        whichPPL = sharedPref.getString("whichPPL", "PUSH");
 
         /* Unbundle whichPPL, exercises, favorites, and dates */
         Bundle b = getIntent().getExtras();
-        if(b.getString("ppl") != null) {
-            whichPPL = b.getString("ppl");
-        }
-        if(b.getParcelable("exercise0") != null) {
+        if(b != null) {
+            String tempPPL = b.getString("ppl");
+            if (tempPPL != null) {
+                if (tempPPL.equals("START") || !tempPPL.equals(whichPPL)) {
+                    whichPPL = "PULL"; //we came from SplashScreen and whichPPL is not different
+                } else {
+                    whichPPL = tempPPL;
+                }
+            }
+            if (b.getParcelable("exercise0") != null) {
 
-            mExercises[0] = b.getParcelable("exercise0");
-            mExercises[1] = b.getParcelable("exercise1");
-            mExercises[2] = b.getParcelable("exercise2");
-            mExercises[3] = b.getParcelable("exercise3");
-            mExercises[4] = b.getParcelable("exercise4");
-            mExercises[5] = b.getParcelable("exercise5");
+                mExercises[0] = b.getParcelable("exercise0");
+                mExercises[1] = b.getParcelable("exercise1");
+                mExercises[2] = b.getParcelable("exercise2");
+                mExercises[3] = b.getParcelable("exercise3");
+                mExercises[4] = b.getParcelable("exercise4");
+                mExercises[5] = b.getParcelable("exercise5");
 
-            mFavorites = b.getIntArray("favorites");
-            mDates = b.getStringArray("dates");
+                mFavorites = b.getIntArray("favorites");
+                mDates = b.getStringArray("dates");
             /*DataBus temp = (DataBus) b.getSerializable("databus");
             mExercises = temp.getExercises();
             mDates = temp.getDates();
             mFavorites = temp.getFavorites();*/
+            }
         }
         updateButtonBar();
         updateScreenData();
@@ -152,6 +154,7 @@ public class StartScreen extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("currentExerciseNumber", currentExerciseNumber);
         editor.putInt("currentSetNumber", currentSetNumber);
+        editor.putString("whichPPL", whichPPL);
         editor.apply(); //asynchronous to avoid UI stuttering
     }
 
@@ -254,6 +257,7 @@ public class StartScreen extends AppCompatActivity {
             }
 
         }
+        fetchHistory();
         updateScreenData();
     }
 
@@ -356,6 +360,7 @@ public class StartScreen extends AppCompatActivity {
         mExercises = temp.getExercises();
         mDates = temp.getDates();
         mFavorites = temp.getFavorites();
+        currentExercise = mExercises[currentExerciseNumber]; //grab new current exercise
     }
 
     /* Fetch history exercises */
@@ -366,7 +371,7 @@ public class StartScreen extends AppCompatActivity {
         } catch (IOException io) {
             throw new Error("Unable to create database");
         }
-
+        currentExercise = mExercises[currentExerciseNumber]; //grab new current exercise
         DataBus temp = handler.getHistory(currentExercise.getExercise());
         mHistoryExercises = temp.getExercises();
         mHistoryDates = temp.getDates();

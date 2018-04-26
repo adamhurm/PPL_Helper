@@ -137,6 +137,7 @@ public class ExerciseListScreen extends AppCompatActivity {
             mIntent.addFlags(mSaveFlag);
 
         startActivity(mIntent);
+        finish(); //close current copy of ExerciseListScreen
     }
 
     /* Switch to ExerciseCustomizeScreen */
