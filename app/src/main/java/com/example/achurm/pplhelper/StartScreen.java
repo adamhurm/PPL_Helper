@@ -19,8 +19,8 @@ import static java.util.Locale.US;
 
 /** Lab 6 **/
 //DONE - Db values being overridden (30)
-//TODO - Lab 6 document (20)
-//TODO - Pixel 2 test (20)
+//DONE - Lab 6 document (20)
+//DONE - Pixel 2 test (20)
 //DONE - Fav button fix onResume (30)
 
 public class StartScreen extends AppCompatActivity {

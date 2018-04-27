@@ -87,15 +87,11 @@ public class VoiceMemos extends AppCompatActivity {
                 + "/memos/memo_"+date+".3gp";
 
         mRecordingName.setText("file:\t" + recordAudioFilePath);
-
-        myRecorder = new MediaRecorder();
-        myPlayer = new MediaPlayer();
-
     }
 
     /** Record Start/Stop Button Presses **/
     public void onRecordButtonClick(View v) throws IOException {
-
+        myRecorder = new MediaRecorder();
         try {
             myRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         } catch(Exception e) {
@@ -141,8 +137,10 @@ public class VoiceMemos extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "New recording created.", Toast.LENGTH_LONG).show();
         playAudioFilePath = recordAudioFilePath;
+        if(mFileIndex == 0) mFileIndex = -1;
         mFileIndex++;
         checkAudioFiles();
+        mRecordButton.setEnabled(true);
         mPlayButton.setEnabled(true);
     }
 
@@ -171,11 +169,13 @@ public class VoiceMemos extends AppCompatActivity {
         myPlayer.reset();
         myPlayer.release();
 
-        myRecorder.release();
 
         mStopPlayButton.setEnabled(false);
         mRecordButton.setEnabled(true);
         checkAudioFiles();
+
+        //button was pressed, therefore a file exists
+        mPlayButton.setEnabled(true);
     }
 
     /** Previous and Next Button Presses */
@@ -215,19 +215,27 @@ public class VoiceMemos extends AppCompatActivity {
     public void checkAudioFiles() {
         File folder = new File(Environment.getExternalStorageDirectory(), "memos");
         File[] files = folder.listFiles();
-        if(files != null) { //are there files in the folder?
-            if (files.length == 1) {
-                mPrevButton.setEnabled(false);
-                mNextButton.setEnabled(false);
+        if(files != null){ //are there files in the folder?
+            if(files.length != 0) {
+                if (files.length == 1) {
+                    mPrevButton.setEnabled(false);
+                    mNextButton.setEnabled(false);
+                } else {
+                    mPrevButton.setEnabled(true);
+                    mNextButton.setEnabled(true);
+                }
+                mFiles = files;
+
+                playAudioFilePath = mFiles[mFileIndex].getAbsolutePath();
+
+                mPlayingName.setText("file:\t" + playAudioFilePath);
+                mPlayButton.setEnabled(true);
             }
             else {
-                mPrevButton.setEnabled(true);
-                mNextButton.setEnabled(true);
+                mPrevButton.setEnabled(false);
+                mNextButton.setEnabled(false);
+                mPlayButton.setEnabled(false);
             }
-            mFiles = files;
-            playAudioFilePath = mFiles[mFileIndex].getAbsolutePath();
-            mPlayingName.setText("file:\t"+playAudioFilePath);
-            mPlayButton.setEnabled(true);
         }
         else { //if no files, disable buttons
             mPrevButton.setEnabled(false);
@@ -237,10 +245,12 @@ public class VoiceMemos extends AppCompatActivity {
     }
     /* List available audio files in the folder */
     public void listAudioFiles(View v) {
-        String temp = "";
+        String temp = "Files found:";
         if(mFiles == null) temp = "No files found.";
-        for(File f: mFiles) {
-            temp += f.getAbsolutePath()+"\n";
+        else {
+            for (File f : mFiles) {
+                temp += "\n" + f.getAbsolutePath();
+            }
         }
         Toast.makeText(getApplicationContext(), temp, Toast.LENGTH_SHORT).show();
     }
